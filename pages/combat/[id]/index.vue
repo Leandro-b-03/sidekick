@@ -10,13 +10,9 @@ const panelColapsed = ref(false);
 const combatId = ref(route.params.id);
 const combat = ref<{
   show: boolean;
-  players: any[];
-  monsters: any[];
   data: any[];
 }>({
   show: false,
-  players: [],
-  monsters: [],
   data: []
 });
 
@@ -49,29 +45,83 @@ const onFormSubmit = async ({ values, valid }) => {
   }
 
   loading.value = true;
-
-  combat.value.monsters = [...combat.value.monsters, values];
   combat.value.show = true;
 
-  console.log(values.monster_qtd);
-
   for (let i = 0; i < values.monster_qtd; i++) {
-    console.log(i);
     combat.value.data = [...combat.value.data, {
       name: values.monster.label,
       initiative: Math.floor(Math.random() * 20),
       hp: 999,
       status: 'alive',
+      type: 'monster',
+      turn: combat.value.data[0]?.turn ? combat.value.data[0].turn.map((index: number) => index === (combat.value.data[0].turn.length - 1) || combat.value.data[0].turn.length === 1 ? {
+        hp: 999,
+      } : 'not_in_combat') : [],
     }];
   }
 
-  console.log('combat.value', combat.value);
+  combat.value.data.sort((a, b) => {
+    if (a.initiative > b.initiative) return -1;
+    if (a.initiative < b.initiative) return 1;
+    return 0;
+  });
+
+  loading.value = false;
 };
 
+const addPlayer = async () => {
+  loading.value = true;
+  combat.value.data = [...combat.value.data, {
+    name: 'Player',
+    initiative: 0,
+    hp: 999,
+    status: 'alive',
+    type: 'player',
+    turn: combat.value.data[0]?.turn ? combat.value.data[0].turn.map((index: number) => index === (combat.value.data[0].turn.length - 1) || combat.value.data[0].turn.length === 1 ? {
+      hp: 999,
+    } : 'not_in_combat') : [],
+  }];
+
+  loading.value = false;
+};
+
+const addTurn = async () => {
+  loading.value = true;
+  combat.value.data.forEach((item, index) => {
+    combat.value.data[index].turn.push({
+      hp: combat.value.data[index].turn[combat.value.data[index].turn.length -1]?.hp || 999,
+    })
+  });
+
+  loading.value = false;
+  console.log(combat.value.data);
+};
+
+const onCellEditComplete = (event) => {
+  let { data, newValue, field } = event;
+
+  switch (field) {
+    case 'initiative':
+      if (newValue > 0 && newValue <= 20) data[field] = newValue;
+      else event.preventDefault();
+
+      combat.value.data.sort((a, b) => {
+        if (a.initiative > b.initiative) return -1;
+        if (a.initiative < b.initiative) return 1;
+        return 0;
+      });
+      break;
+
+    default:
+      if (newValue.trim().length > 0) data[field] = newValue;
+      else event.preventDefault();
+      break;
+  }
+};
 </script>
 
 <template>
   <COMBATForm :monsters="monsters" :initialValues="initialValues" :resolver="resolver" :onFormSubmit="onFormSubmit" :loading="loading" :panelColapsed="panelColapsed" />
 
-  <COMBATTable :combat="combat" :loading="loading" />
+  <COMBATTable :combat="combat" :loading="loading" :addPlayer="addPlayer" :onCellEditComplete="onCellEditComplete" :addTurn="addTurn" />
 </template>
