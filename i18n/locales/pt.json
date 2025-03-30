@@ -104,7 +104,14 @@
     "item_empty": "Nenhum item encontrado",
     "npc_empty": "Nenhum NPC encontrado",
     "quantity": "Quantidade",
-    "quantity_short": "QTD"
+    "quantity_short": "QTD",
+    "max-hp": "Pontos de vida máximos",
+    "max-hp-abvr": "PV máx.",
+    "current-hp": "Pontos de vida atuais",
+    "current-hp-abvr": "PV atual",
+    "status": "Status",
+    "turn": "Turno",
+    "credits": "Créditos: "
   },
   "attr": {
     "str": "Força",
@@ -161,9 +168,20 @@
       "description": "Gere o conteúdo estático do seu site",
       "list": "Lista de Combates",
     },
-    "add_player": "Adicionar Jogador",
+    "add": {
+      "header": "Adicionar monstros"
+    },
+    "not_in_combat": "Não estava em combate",
+    "not_in_combat_abvr": "NEC",
+    "add_player": "Adicionar Jogador ou NPC",
     "add_enemy": "Adicionar Inimigo",
-    "add_turn": "Adicionar Turno"
+    "add_turn": "Adicionar Turno",
+    "save_combat": "Salvar Combate",
+    "reset_combat": "Reiniciar Combate",
+    "messages": {
+      "no-combatants": "Nenhum combatente encontrado",
+      "no-combatants-detail": "Adicione um jogador ou inimigo para iniciar o combate"
+    }
   },
   "age": {
     "title": "Idade",
@@ -545,6 +563,9 @@
     },
     "enemies": {
       "header": "Buscar por Inimigos"
+    },
+    "combat": {
+      "header": "Buscar por monstros em Combate"
     }
   },
   "monsters": {

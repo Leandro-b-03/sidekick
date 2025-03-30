@@ -1,34 +1,55 @@
 <script setup lang="ts">
+import type { MonsterInfo, MonsterFormValues } from '@/interfaces/combat.inteface';
+
 const route = useRoute();
 
-const props = withDefaults(defineProps<{
-  monsters: any;
-  initialValues: any;
-  resolver: any;
-  onFormSubmit: any;
-  panelColapsed: any;
-  loading: any;
-}>(), {
-  monsters: []
+const props = defineProps({
+  monsters: {
+    type: Array as PropType<MonsterInfo[]>,
+    required: true,
+  },
+  initialValues: {
+    type: Object, // Use the specific form values interface
+    required: true,
+  },
+  resolver: {
+    type: Function,
+    required: true,
+  },
+  onFormSubmit: {
+    type: Function,
+    required: true,
+  },
+  panelColapsed: { // Renamed from panelColapsed (typo) in the original provided code snippet's watch
+    type: Boolean,
+    required: false, // Parent controls this state
+  },
+  loading: {
+    type: Boolean,
+    default: false, // Loading might have a sensible default
+  }
 });
 
 const panelColapsed = ref(props.panelColapsed);
 const search = ref(route.params.id ? false : true);
-const header = ref(!search.value ? 'generate.items.header' : 'search.items.header');
-const button = ref(!search.value ? 'common.generate' : 'search.title');
+const header = ref(!search.value ? 'combat.add.header' : 'search.combat.header');
 const panel = ref(null);
 
-watch(() => props.panelColapsed, () => {
-  if (props.panelColapsed === true) {
-    console.log('Panel is collapsed');
-    panel.value.toggle();
+/**
+ * Selects a random monster from the list and sets quantity to 1.
+ * Note: This mutates the form state directly via the refs passed from the <Form> component's slot.
+ * @param monsterRef A ref holding the currently selected monster object in the form.
+ * @param qtdRef A ref holding the quantity value in the form.
+ */
+ const randomMonster = (monsterRef: Ref<MonsterInfo | undefined>, qtdRef: Ref<number | undefined>) => {
+  if (props.monsters.length > 0) {
+    // Select a random monster. Ensure index is valid.
+    const randomIndex = Math.floor(Math.random() * props.monsters.length);
+    monsterRef.value = props.monsters[randomIndex];
+  } else {
+     monsterRef.value = undefined; // Handle empty monster list case
   }
-});
-
-const randomMonster = (monster: any, qtd: any) => {
-  monster.value = props.monsters[(Math.floor(Math.random() * props.monsters.length) + 1)];
-
-  qtd.value = 1;
+  qtdRef.value = 1; // Set quantity to 1
 };
 </script>
 

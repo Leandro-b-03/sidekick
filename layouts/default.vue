@@ -1,5 +1,6 @@
 <template>
   <div class="app">
+    <Toast />
     <AppHeader />
     <div class="flex flex-row mt-16">
       <AppSidebar />
