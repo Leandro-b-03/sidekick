@@ -181,14 +181,14 @@ These attributes define the structure of the `ITEMS` collection and are used to 
 
 The `COMBATS` collection in Appwrite contains the following attributes:
 
-| Attribute   | Type       | Default  | Description                                                                       |
-|-------------|------------|----------|-----------------------------------------------------------------------------------|
-| `combat_id` | `string`   | -        | A unique identifier for the combat.                                               |
-| `monsters`  | `integer`  | `0`      | The number of monsters involved in the combat.                                    |
-| `players`   | `integer`  | `0`      | The number of players participating in the combat.                                |
-| `turns`     | `integer`  | `1`      | The current turn number in the combat.                                            |
-| `status`    | `enum`     | `running`| The status of the combat (`running`, `finished`).                                 |
-| `won`       | `enum`     | `none`   | Who have won the combat, players or npc or still running (`running`, `finished`). |
+| Attribute   | Type       | Default  | Description                                                                              |
+|-------------|------------|----------|------------------------------------------------------------------------------------------|
+| `combat_id` | `string`   | -        | A unique identifier for the combat.                                                      |
+| `monsters`  | `integer`  | `0`      | The number of monsters involved in the combat.                                           |
+| `players`   | `integer`  | `0`      | The number of players participating in the combat.                                       |
+| `turns`     | `integer`  | `1`      | The current turn number in the combat.                                                   |
+| `status`    | `enum`     | `running`| The status of the combat (`running`, `finished`).                                        |
+| `won`       | `enum`     | `none`   | Who have won the combat, players or npc or still running (`players`, `monster`, `none`). |
 
 These attributes define the structure of the `COMBATS` collection and are used to manage and track combat scenarios in the RPG.
 
