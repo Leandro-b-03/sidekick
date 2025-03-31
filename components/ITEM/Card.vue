@@ -1,9 +1,18 @@
 <script setup lang="ts">
-const props = defineProps<{
-  item: any;
-  loading: boolean;
-  onFileChange: any;
-}>();
+const props = defineProps({
+  item: {
+    type: Object,
+    required: true
+  },
+  loading: {
+    type: Boolean,
+    default: false
+  },
+  onFileChange: {
+    type: Function,
+    required: true
+  }
+});
 
 const showButtons = ref(false);
 const op = ref(null);
@@ -138,20 +147,6 @@ const generatePDF = () => {
                     </div>
                   </div>
                   <div>
-                    <!-- <div v-for="nivel in item.evolutionLevel" class="rounded bg-gray-100 overflow-hidden mb-2">
-                      <div class="bg-gray-200 py-1 px-2 rounded-tl">
-                        <h2 class="font-semibold text-base">{{ $t(`item_tier.tier_${nivel.level}`) }}</h2>
-                      </div>
-                      <div class="text-justify text-xs p-2">
-                        <Skeleton v-if="loading" width="100%" height="100px" />
-                        <div v-else>
-                          <p>{{ nivel.playerLevel }}</p>
-                          <p v-for="(bonus, index) in nivel.bonus" :key="index">{{ (bonus != undefined && bonus != '') ? bonus : '-' }}</p>
-                          <p>{{ nivel.appearance }}</p>
-                          <p>{{ nivel.evolutionRequirement }}</p>
-                        </div>
-                      </div>
-                    </div> -->
                     <table v-for="nivel in item.evolutionLevel" class="w-full border-separate mb-2">
                       <thead>
                         <tr>

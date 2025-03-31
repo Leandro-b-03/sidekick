@@ -86,7 +86,7 @@ const openDialog = (data: any) => {
       <Column field="order" style="width: 5%" header="#" frozen>
         <template #body="{ index }">{{ index + 1 }}</template>
       </Column>
-      <Column field="name" :header="$t('common.name')" style="width: 20%;" frozen>
+      <Column field="name" :header="$t('common.name')" style="width: 10%;" frozen>
         <template #editor="{ data, field }">
           <InputText v-if="data.type == 'player'" v-model="data[field]" autofocus class="w-[300px]" />
           <template v-else>{{ $t(data.name) }}</template>
@@ -95,7 +95,7 @@ const openDialog = (data: any) => {
           {{ $t(data.name) }}
         </template>
       </Column>
-      <Column style="width: 2%;">
+      <Column style="width: 4%;">
         <template #body="{ data }">
           <Button icon="pi pi-times" severity="danger" @click="removeCombatant(data)" size="small" class="mr-2" />
           <Button v-if="data.type === 'monster'" icon="pi pi-eye" severity="info" @click="openDialog(data)" size="small" />

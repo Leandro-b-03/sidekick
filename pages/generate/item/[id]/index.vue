@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import defaultImage from '~/assets/images/items/default.webp';
+import defaultImage from '@/assets/images/items/default.webp';
+import type { MagicItemLocalState, MagicItemDocument } from '@/interfaces/npc.inteface';
 
 const { locale } = useNuxtApp().$i18n;
 const { database, ID } = useAppwrite();
@@ -7,57 +8,71 @@ const config = useRuntimeConfig();
 const router = useRouter();
 const route = useRoute();
 
-const panelColapsed = ref(false);
+const panelCollapsed = ref(false);
 const loading = ref(false);
-const type = ref('');
-const panel = ref(null);
-const item = reactive({
+const item = reactive<MagicItemLocalState>({
   show: false,
-  class_: '',
   name: '',
+  class: null,
   description: '',
-  weaponType: '',
-  damage: '',
+  weaponType: null,
   requirements: '',
   type: '',
-  wondrousItems: '',
+  wondrousItem: null,
   rarity: '',
-  itemTier: '',
   evolutionLevel: [
-    { level: 1 },
-    { level: 2 },
-    { level: 3 },
-    { level: 4 },
-    { level: 5 }
+    {
+      level: 1,
+      player_level: '',
+      bonus: {},
+      appearance: '',
+      evolution_requirement: ''
+    },
+    {
+      level: 2,
+      player_level: '',
+      bonus: {},
+      appearance: '',
+      evolution_requirement: ''
+    },
+    {
+      level: 3,
+      player_level: '',
+      bonus: {},
+      appearance: '',
+      evolution_requirement: ''
+    },
+    {
+      level: 4,
+      player_level: '',
+      bonus: {},
+      appearance: '',
+      evolution_requirement: ''
+    },
+    {
+      level: 5,
+      player_level: '',
+      bonus: {},
+      appearance: '',
+      evolution_requirement: ''
+    }
   ],
   notes: [],
-  image: defaultImage,
   evolutionNotes: [],
+  damage: {
+    base: '',
+    versatile: ''
+  },
+  itemTier: null,
+  damageType: null,
+  $id: '',
+  $createdAt: '',
+  $updatedAt: '',
+  $permissions: [],
+  $databaseId: '',
+  $collectionId: '',
+  image: defaultImage,
 });
-
-if (item.show == true && item.name != '' && route.params.id == 'new') {
-  const response = await database.createDocument(
-    config.public.databaseID,
-    config.public.itemsCollectionID,
-    ID.unique(),
-    {
-      name: item.name,
-      class: item.class_,
-      description: item.description,
-      type: item.type,
-      damage: [JSON.stringify(item.damage)],
-      damage_type: item.damage_type,
-      requirements: item.requirements,
-      wondrous_item: item.wondrous_item,
-      rarity: item.rarity,
-      item_tier: item.item_tier,
-      weapon_type: item.weaponType,
-      evolution_level: [JSON.stringify(item.evolutionLevel)],
-      notes: item.notes,
-      evolution_notes: item.evolutionNotes
-    }
-  );
-}
 
 const { data: classesData, status: statusClasses, error: errorClasses, refresh: refreshClasses, clear: clearClasses } = await useAsyncData(
   'classes',
@@ -93,11 +108,10 @@ const initialValues = reactive({
   weapons: weapons.value[0],
 });
 
-const resolver = ({ values }) => {
-  const errors = {};
-  const requiredFields = [
-    'type', 'class_', 'rarity', 'damage'
-  ];
+const resolver = ({ values }: { values: any }) => {
+  const errors: Record<string, { message: string }[]> = {};
+  // Use consistent names matching initialValues/form fields
+  const requiredFields = ['type', 'class', 'rarity', 'damage_type']; // Adjusted names?
   requiredFields.forEach(field => {
     if (!values[field]) {
       errors[field] = [{ message: `${field} is required.` }];
@@ -106,71 +120,81 @@ const resolver = ({ values }) => {
   return { values, errors };
 };
 
-const onFileChange = (event) => {
-  const file = event.target.files[0];
+const onFileChange = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  const file = target.files?.[0];
   if (file) {
     const reader = new FileReader();
     reader.onload = (e) => {
-      item.image = e.target.result;
+      item.image = e.target?.result ?? null; // Assign result to local state
     };
     reader.readAsDataURL(file);
   }
 };
 
-const onFormSubmit = async ({ values, valid }) => {
+const onFormSubmit = async ({ values, valid }: { values: any, valid: boolean }) => {
   if (!valid) return;
 
-  panelColapsed.value = true;
+  panelCollapsed.value = true;
   loading.value = true;
-  item.show = true;
+  item.show = true; // Indicate processing/showing result
   item.image = '';
 
   try {
     const formData = new FormData();
     formData.append('generate', 'ITEM');
-    Object.entries(values).map(([key, value]) => {
-      formData.append(key, value.value);
+    Object.entries(values).forEach(([key, valueObj]: [string, any]) => {
+        let api_key = key;
+        if (key === 'class_') api_key = 'class';
+        if (valueObj && typeof valueObj === 'object' && 'value' in valueObj) {
+          formData.append(api_key, valueObj.value);
+        } else {
+          console.warn(`Unexpected value structure for key: ${key}`, valueObj);
+        }
+
     });
 
-    const ITEM = await $fetch('/api/core', { method: 'POST', body: formData });
+    const generatedItemData = await $fetch('/api/core', { method: 'POST', body: formData });
 
-    Object.assign(item, {
-      ...ITEM,
-      class_: ITEM.class,
-      wondrousItems: ITEM.wondrous_items,
-      weaponType: ITEM.weapon,
-      evolutionLevel: ITEM.evolution_levels,
-      evolutionNotes: ITEM.evolution_notes,
-      image: defaultImage,
-    });
+    const dataToSave: MagicItemDocument = {
+      name: generatedItemData.name,
+      class: generatedItemData.class, // Use consistent names
+      description: generatedItemData.description,
+      type: generatedItemData.type,
+      damage: [JSON.stringify(generatedItemData.damage)], // Stringify object
+      damage_type: generatedItemData.damage_type,
+      requirements: generatedItemData.requirements,
+      wondrous_item: generatedItemData.wondrous_item, // Use consistent names
+      rarity: generatedItemData.rarity,
+      item_tier: generatedItemData.item_tier,
+      weapon_type: generatedItemData.weapon_type, // Use consistent names
+      evolution_level: [JSON.stringify(generatedItemData.evolution_level)], // Stringify array of objects
+      notes: generatedItemData.notes,
+      evolution_notes: generatedItemData.evolution_notes, // Use consistent names
+    };
 
     const response = await database.createDocument(
       config.public.databaseID,
       config.public.itemsCollectionID,
       ID.unique(),
-      {
-        name: ITEM.name,
-        class: ITEM.class,
-        description: ITEM.description,
-        type: ITEM.type,
-        damage: [JSON.stringify(ITEM.damage)],
-        damage_type: ITEM.damage_type,
-        requirements: ITEM.requirements,
-        wondrous_item: ITEM.wondrous_items,
-        rarity: ITEM.rarity,
-        item_tier: ITEM.item_tier,
-        weapon_type: ITEM.weapon,
-        evolution_level: [JSON.stringify(ITEM.evolution_levels)],
-        notes:ITEM.notes,
-        evolution_notes: ITEM.evolution_notes
-      }
+      dataToSave
     );
+
+     Object.assign(item, {
+         ...dataToSave,
+         $id: response.$id,
+         $createdAt: response.$createdAt,
+         $updatedAt: response.$updatedAt,
+         evolution_level: generatedItemData.evolution_level,
+         damage: generatedItemData.damage,
+         image: defaultImage,
+     });
 
     router.push({
       name: `generate-item-id___${locale.value}`,
       params: { id: response.$id },
-      reload: false,
     });
+
   } catch (error) {
     console.error('Error creating ITEM:', error);
   } finally {
@@ -178,44 +202,47 @@ const onFormSubmit = async ({ values, valid }) => {
   }
 };
 
-onMounted(async () => {
+const getDocument = async () => {
   const id = route.params.id;
-  if (id !== 'new') {
+  if (id && id !== 'new') {
     item.show = true;
     loading.value = true;
-    panelColapsed.value = true;
+    panelCollapsed.value = true;
     try {
-      const response = await database.getDocument(
+      // Fetch the document - Cast the result for better type safety
+      const doc = await database.getDocument(
         config.public.databaseID,
         config.public.itemsCollectionID,
         id
-      );
-      
+      ) as unknown as MagicItemDocument; // Use intersection type
+
+      // --- Update local state ---
       Object.assign(item, {
-        ...response,
-        class_: response.class,
-        name: response.name,
-        description: response.description,
-        type: response.type,
-        damage: JSON.parse(response.damage[0]),
-        requirements: response.requirements,
-        wondrousItems: response.wondrous_item,
-        rarity: response.rarity,
-        itemTier: response.item_tier,
-        weaponType: response.weapon_type,
-        evolutionLevel: JSON.parse(response.evolution_level[0]),
-        notes: response.notes,
-        evolutionNotes: response.evolution_notes,
+        ...doc, // Spread basic fields + Appwrite metadata ($id, $createdAt etc.)
+        show: true, // Ensure show is true
+        // Parse stringified fields back into objects/arrays for local state
+        damage: JSON.parse(doc.damage[0] || '{}'), // Add fallback for safety
+        evolution_level: JSON.parse(doc.evolution_level[0] || '[]'), // Add fallback
+        image: defaultImage, // TODO: Load actual image if stored/available
+        // Ensure any name mappings are done here if needed (e.g. class vs class_)
       });
-      panelColapsed.value = true;
+
     } catch (error) {
-      console.error('Error fetching NPC:', error);
+      console.error('Error fetching Item:', error);
+      // TODO: Handle error (e.g., show not found message, redirect)
+      router.push('/error'); // Example redirect
     } finally {
-      loading.value = false;
     }
   } else {
-    panelColapsed.value = false;
+    // Reset item state for 'new' case? Panel state handled.
+     panelCollapsed.value = false; // Ensure panel is open for new items
   }
+}
+
+onMounted(async () => {
+  loading.value = true
+  await getDocument();
+  loading.value = false;
 });
 </script>
 
@@ -231,7 +258,7 @@ onMounted(async () => {
     :weapons="weapons"
     :initialValues="initialValues"
     :resolver="resolver"
-    :panelColapsed="panelColapsed"
+    :panelCollapsed="panelCollapsed"
     />
 
   <ITEMCard :item="item" :loading="loading" :onFileChange="onFileChange" />

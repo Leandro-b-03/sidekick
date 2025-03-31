@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { COMBATANT_STATUS } from '@/interfaces/combat.inteface';
 import type { Combatant } from '@/interfaces/combat.inteface';
-import { parse } from 'vue/compiler-sfc';
 
 const route = useRoute();
 const router = useRouter();
@@ -184,8 +183,7 @@ const onCellEditComplete = (event: any) => {
         combatants.value = combatants.value.map(combatant => {
           if (combatant.id === data.id) {
             const lastTurn = combatant.turnHistory[combatant.turnHistory.length - 1];
-            combatant.currentHp = lastTurn?.hp ?? combatant.currentHp;
-            combatant.currentHp = parseInt(newValue, 10);
+            combatant.currentHp = parseInt(lastTurn?.hp, 10) ?? parseInt(combatant.currentHp, 10);
             combatant.status = combatant.currentHp > 0 ? COMBATANT_STATUS.ALIVE : COMBATANT_STATUS.DEAD;
           }
           return combatant;
@@ -259,7 +257,7 @@ const saveCombat = async () => {
           config.public.initiativeCollectionID,
           ID.unique(),
           {
-            current_hp: parseInt(combatant.currentHp, 10),
+            current_hp: parseInt(combatant.currentHp),
             id: combatant.id,
             initiative: combatant.initiative,
             max_hp: combatant.maxHp,
@@ -278,7 +276,7 @@ const saveCombat = async () => {
 
       router.push({
         name: `combat-id___${locale.value}`,
-        params: { id: combatId.value },
+        params: { id: combatId_ },
       });
     } else {
       combatants.value.map(async combatant => {
@@ -287,7 +285,7 @@ const saveCombat = async () => {
           config.public.initiativeCollectionID,
           combatant.docId,
           {
-            current_hp: parseInt(combatant.currentHp, 10),
+            current_hp: parseInt(combatant.currentHp),
             initiative: combatant.initiative,
             max_hp: combatant.maxHp,
             name: combatant.name,
@@ -297,7 +295,31 @@ const saveCombat = async () => {
           }
         );
       });
+
+      // Clear local storage after saving
+      $toast.add({ severity: 'success', summary: t('combat.messages.saved'), detail: t('combat.messages.saved-detail'), life: 3000 });
     }
+
+    const monsters = combatants.value.map(c => c.type === 'monster' && c.status === COMBATANT_STATUS.ALIVE ? c : null).filter(c => c !== null).length;
+    const players = combatants.value.map(c => c.type === 'player' && c.status === COMBATANT_STATUS.ALIVE ? c : null).filter(c => c !== null).length;
+    const combatStatus = monsters > 0 && players > 0 ? 'in_progress' : 'finished';
+    const won = monsters > 0 ? 'monsters' : players > 0 ? 'players' : 'none';
+
+    const response = await database.createDocument(
+      config.public.databaseID,
+      config.public.combatsCollectionID,
+      ID.unique(),
+      {
+        combat_id: combatId_,
+        monsters: combatants.value.map(c => c.type === 'monster' ? c : null).filter(c => c !== null).length,
+        players: combatants.value.map(c => c.type === 'player' ? c : null).filter(c => c !== null).length,
+        turns: combatants.value[0].turnHistory.length,
+        status: combatStatus,
+        won: won,
+      }
+    );
+    
+    console.log('Combat saved:', response);
   } catch (error) {
     console.error('Error saving combat:', error);
     $toast.add({ severity: 'error', summary: t('combat.messages.error-saving'), detail: t('combat.messages.error-saving-detail'), life: 3000 });
@@ -307,7 +329,12 @@ const saveCombat = async () => {
 }
 
 onMounted(async () => {
-  console.log(combatId.value);
+  if (import.meta.client) {
+    if (route.params.reset === 'true') {
+      localStorage.removeItem('combatants');
+    }
+  }
+
   if (route.params.id !== 'new') {
     await getCombat();
   }

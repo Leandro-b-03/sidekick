@@ -1,12 +1,24 @@
 <script setup lang="ts">
 const router = useRouter();
 
-const props = defineProps<{
-  page: number;
-  rows: number;
-  perPage: number;
-  totalRecords: number;
-}>();
+  const props = defineProps({
+  page: {
+    type: Number,
+    default: 1
+  },
+  rows: {
+    type: Number,
+    default: 0
+  },
+  totalRecords: {
+    type: Number,
+    required: true
+  },
+  perPage: {
+    type: Number,
+    default: 10
+  }
+});
 
 const rowsPerPageOptions = [10, 20, 30];
 const last = ref(props.totalRecords / props.perPage);

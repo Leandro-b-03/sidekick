@@ -1,24 +1,55 @@
 <script setup lang="ts">
+import type { SelectOption } from '@/interfaces/common.interface';
+
 const route = useRoute();
 
-const props = withDefaults(defineProps<{
-  types: any;
-  classesData: any;
-  rarities: any;
-  damages: any;
-  weapons: any;
-  wondrousItems: any;
-  onFormSubmit: any,
-  initialValues: any,
-  resolver: any,
-  panelColapsed: any,
-}>(), {
-  types: [],
-  classesData: [],
-  rarities: [],
-  damages: [],
-  weapons: [],
-  wondrousItems: []
+const props = defineProps({
+  // Data for dropdowns/selects
+  types: {
+    type: Array as PropType<SelectOption[]>,
+    default: () => [],
+  },
+  classesData: {
+    type: Array as PropType<SelectOption[]>,
+    default: () => [],
+  },
+  rarities: {
+    type: Array as PropType<SelectOption[]>,
+    default: () => [],
+  },
+  damages: {
+    type: Array as PropType<SelectOption[]>, // Assuming this is for damage_type select
+    default: () => [],
+  },
+  weapons: {
+    type: Array as PropType<SelectOption[]>, // Assuming for weapon_type select
+    default: () => [],
+  },
+  wondrousItems: {
+    type: Array as PropType<SelectOption[]>,
+    default: () => [],
+  },
+  // Functions & State from Parent
+  onFormSubmit: {
+    type: Function,
+    required: true,
+  },
+  initialValues: {
+    type: Object as PropType<SelectOption>, // Or a more specific interface if form structure is fixed
+    required: true,
+  },
+  resolver: {
+    type: Function,
+    required: true,
+  },
+  panelColapsed: { // Renamed prop from 'panelColapsed' for consistency
+    type: Boolean,
+    required: true, // Parent controls initial state
+  },
+  loading: { // Added loading prop, assuming it's needed for buttons etc.
+      type: Boolean,
+      default: false,
+  }
 });
 
 const type = ref('');
@@ -35,9 +66,13 @@ watch(() => props.panelColapsed, () => {
   }
 });
 
+/**
+ * Handles the change event from the item type selection component.
+ * @param {SelectOption | string | number} value - The new value selected. Type depends on the component emitting it.
+ */
 const changeType = (type_: Event) => {
   type.value = type_.value;
-}
+};
 </script>
 
 <template>

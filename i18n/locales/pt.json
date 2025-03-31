@@ -103,6 +103,7 @@
     "total": "Total: ",
     "item_empty": "Nenhum item encontrado",
     "npc_empty": "Nenhum NPC encontrado",
+    "combat_empty": "Nenhum combate encontrado",
     "quantity": "Quantidade",
     "quantity_short": "QTD",
     "max-hp": "Pontos de vida máximos",
@@ -111,6 +112,11 @@
     "current-hp-abvr": "PV atual",
     "status": "Status",
     "turn": "Turno",
+    "turns": "Turnos",
+    "monsters": "Monstros",
+    "players": "Jogadores",
+    "created": "Criado em",
+    "winner": "Vencedor",
     "credits": "Créditos: "
   },
   "attr": {
@@ -181,7 +187,8 @@
     "messages": {
       "no-combatants": "Nenhum combatente encontrado",
       "no-combatants-detail": "Adicione um jogador ou inimigo para iniciar o combate"
-    }
+    },
+    "summary": "Resumo do Combate"
   },
   "age": {
     "title": "Idade",
