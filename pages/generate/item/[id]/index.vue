@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import defaultImage from '@/assets/images/items/default.webp';
-import type { MagicItemLocalState, MagicItemDocument } from '@/interfaces/npc.inteface';
+import type { MagicItemLocalState, MagicItemDocument, MagicItemDocumentSave } from '@/interfaces/item.type';
+import type { SelectOption } from '@/interfaces/common.type';
 
 const { locale } = useNuxtApp().$i18n;
 const { database, ID } = useAppwrite();
@@ -74,27 +75,27 @@ const item = reactive<MagicItemLocalState>({
   image: defaultImage,
 });
 
-const { data: classesData, status: statusClasses, error: errorClasses, refresh: refreshClasses, clear: clearClasses } = await useAsyncData(
+const { data: classesData, status: statusClasses, error: errorClasses, refresh: refreshClasses, clear: clearClasses } = await useAsyncData<SelectOption[]>(
   'classes',
   () => $fetch(`${config.public.url}tables/classes.json`)
 );
-const { data: damages, status: statusDamages, error: errorDamages, refresh: refreshDamages, clear: clearDamages } = await useAsyncData(
+const { data: damages, status: statusDamages, error: errorDamages, refresh: refreshDamages, clear: clearDamages } = await useAsyncData<SelectOption[]>(
   'damages',
   () => $fetch(`${config.public.url}tables/damage_type.json`)
 );
-const { data: types, status: statusTypes, error: errorTypes, refresh: refreshTypes, clear: clearTypes } = await useAsyncData(
+const { data: types, status: statusTypes, error: errorTypes, refresh: refreshTypes, clear: clearTypes } = await useAsyncData<SelectOption[]>(
   'types',
   () => $fetch(`${config.public.url}tables/types.json`)
 );
-const { data: wondrousItems, status: statusWondrousItems, error: errorWondrousItems, refresh: refreshWondrousItems, clear: clearWondrousItems } = await useAsyncData(
+const { data: wondrousItems, status: statusWondrousItems, error: errorWondrousItems, refresh: refreshWondrousItems, clear: clearWondrousItems } = await useAsyncData<SelectOption[]>(
   'wondrousItems',
   () => $fetch(`${config.public.url}tables/wondrous_items.json`)
 );
-const { data: rarities, status: statusRarities, error: errorRarities, refresh: refreshRarities, clear: clearRarities } = await useAsyncData(
+const { data: rarities, status: statusRarities, error: errorRarities, refresh: refreshRarities, clear: clearRarities } = await useAsyncData<SelectOption[]>(
   'rarities',
   () => $fetch(`${config.public.url}tables/rarities.json`)
 );
-const { data: weapons, status: statusWeapons, error: errorWeapons, refresh: refreshWeapons, clear: clearWeapons } = await useAsyncData(
+const { data: weapons, status: statusWeapons, error: errorWeapons, refresh: refreshWeapons, clear: clearWeapons } = await useAsyncData<SelectOption[]>(
   'weapons',
   () => $fetch(`${config.public.url}tables/weapons.json`)
 );
@@ -145,7 +146,7 @@ const onFormSubmit = async ({ values, valid }: { values: any, valid: boolean }) 
     formData.append('generate', 'ITEM');
     Object.entries(values).forEach(([key, valueObj]: [string, any]) => {
         let api_key = key;
-        if (key === 'class_') api_key = 'class';
+        // if (key === 'class_') api_key = 'class';
         if (valueObj && typeof valueObj === 'object' && 'value' in valueObj) {
           formData.append(api_key, valueObj.value);
         } else {
@@ -156,7 +157,7 @@ const onFormSubmit = async ({ values, valid }: { values: any, valid: boolean }) 
 
     const generatedItemData = await $fetch('/api/core', { method: 'POST', body: formData });
 
-    const dataToSave: MagicItemDocument = {
+    const dataToSave: MagicItemDocumentSave = {
       name: generatedItemData.name,
       class: generatedItemData.class, // Use consistent names
       description: generatedItemData.description,
@@ -168,7 +169,7 @@ const onFormSubmit = async ({ values, valid }: { values: any, valid: boolean }) 
       rarity: generatedItemData.rarity,
       item_tier: generatedItemData.item_tier,
       weapon_type: generatedItemData.weapon_type, // Use consistent names
-      evolution_level: [JSON.stringify(generatedItemData.evolution_level)], // Stringify array of objects
+      evolution_level: [JSON.stringify(generatedItemData.evolution_levels)], // Stringify array of objects
       notes: generatedItemData.notes,
       evolution_notes: generatedItemData.evolution_notes, // Use consistent names
     };
@@ -181,13 +182,14 @@ const onFormSubmit = async ({ values, valid }: { values: any, valid: boolean }) 
     );
 
      Object.assign(item, {
-         ...dataToSave,
-         $id: response.$id,
-         $createdAt: response.$createdAt,
-         $updatedAt: response.$updatedAt,
-         evolution_level: generatedItemData.evolution_level,
-         damage: generatedItemData.damage,
-         image: defaultImage,
+        ...dataToSave,
+        $id: response.$id,
+        $createdAt: response.$createdAt,
+        $updatedAt: response.$updatedAt,
+        evolutionLevel: generatedItemData.evolution_levels,
+        damageType: generatedItemData.damage_type,
+        damage: generatedItemData.damage,
+        image: defaultImage,
      });
 
     router.push({
@@ -209,33 +211,29 @@ const getDocument = async () => {
     loading.value = true;
     panelCollapsed.value = true;
     try {
-      // Fetch the document - Cast the result for better type safety
       const doc = await database.getDocument(
         config.public.databaseID,
         config.public.itemsCollectionID,
         id
-      ) as unknown as MagicItemDocument; // Use intersection type
-
-      // --- Update local state ---
+      ) as unknown as MagicItemDocument; 
+      
       Object.assign(item, {
-        ...doc, // Spread basic fields + Appwrite metadata ($id, $createdAt etc.)
-        show: true, // Ensure show is true
-        // Parse stringified fields back into objects/arrays for local state
-        damage: JSON.parse(doc.damage[0] || '{}'), // Add fallback for safety
-        evolution_level: JSON.parse(doc.evolution_level[0] || '[]'), // Add fallback
-        image: defaultImage, // TODO: Load actual image if stored/available
-        // Ensure any name mappings are done here if needed (e.g. class vs class_)
+        ...doc, 
+        show: true, 
+        damage: JSON.parse(doc.damage[0] || '{}'), 
+        evolutionLevel: JSON.parse(doc.evolution_level[0] || '[]'), 
+        wondrousItem: doc.wondrous_item,
+        weaponType: doc.weapon_type,
+        evolutionNotes: doc.evolution_notes,
+        image: defaultImage, 
       });
-
     } catch (error) {
       console.error('Error fetching Item:', error);
-      // TODO: Handle error (e.g., show not found message, redirect)
-      router.push('/error'); // Example redirect
+      // router.push('/error'); 
     } finally {
     }
   } else {
-    // Reset item state for 'new' case? Panel state handled.
-     panelCollapsed.value = false; // Ensure panel is open for new items
+     panelCollapsed.value = false;
   }
 }
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { MonsterInfo, MonsterFormValues } from '@/interfaces/combat.inteface';
+import type { MonsterInfo, MonsterFormValues } from '~/interfaces/combat.type';
 
 const route = useRoute();
 

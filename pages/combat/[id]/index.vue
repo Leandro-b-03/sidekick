@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { COMBATANT_STATUS } from '@/interfaces/combat.inteface';
-import type { Combatant } from '@/interfaces/combat.inteface';
+import { COMBATANT_STATUS } from '~/interfaces/combat.type';
+import type { Combatant } from '~/interfaces/combat.type';
 
 const route = useRoute();
 const router = useRouter();
@@ -318,7 +318,7 @@ const saveCombat = async () => {
         won: won,
       }
     );
-    
+
     console.log('Combat saved:', response);
   } catch (error) {
     console.error('Error saving combat:', error);

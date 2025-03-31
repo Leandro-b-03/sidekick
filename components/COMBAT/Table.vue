@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Combatant, MonsterInfo } from '@/interfaces/combat.inteface';
+import type { Combatant, MonsterInfo } from '~/interfaces/combat.type';
 
 // Define function prop types explicitly for clarity and safety
 type CellEditCompleteFn = (event: any) => Promise<void>;

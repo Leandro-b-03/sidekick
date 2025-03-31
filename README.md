@@ -1,8 +1,9 @@
-# Nuxt Minimal Starter
+# Standard instalation
+## Nuxt Minimal Starter
 
 Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
 
-## Setup
+### Setup
 
 Make sure to install dependencies:
 
@@ -20,7 +21,7 @@ yarn install
 bun install
 ```
 
-## Development Server
+### Development Server
 
 Start the development server on `http://localhost:3000`:
 
@@ -38,7 +39,7 @@ yarn dev
 bun run dev
 ```
 
-## Production
+### Production
 
 Build the application for production:
 
@@ -73,3 +74,21 @@ bun run preview
 ```
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+
+# Master App config
+## Environment Variables
+
+Create a `.env` file in the root of your project and add the following variables:
+
+```env
+URL=http://localhost:3000/
+DATABASE=Appwrite database id
+NPCS=NPC collection id
+COMBATS=Combat collection id
+INITIATIVE=Initiative collection id
+ITEMS=Item collection id
+DEEPSEEK_URL=https://api.deepseek.com
+DEEPSEEK_API_KEY=Deepseek Api Key
+```
+
+Make sure to keep your `.env` file secure and avoid committing it to version control.

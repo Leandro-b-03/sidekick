@@ -1,8 +1,14 @@
 <script setup lang="ts">
-const props = defineProps<{
-  npcs: Object[];
-  loading: boolean;
-}>();
+const props = defineProps({
+  npcs: {
+    type: Array,
+    default: () => []
+  },
+  loading: {
+    type: Boolean,
+    default: false
+  }
+});
 </script>
 
 <template>

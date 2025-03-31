@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import type { SelectOption } from '@/interfaces/common.interface';
+import type { SelectOption } from '@/interfaces/common.type';
 
 const route = useRoute();
 
 const props = defineProps({
-  // Data for dropdowns/selects
   types: {
     type: Array as PropType<SelectOption[]>,
     default: () => [],
@@ -18,49 +17,48 @@ const props = defineProps({
     default: () => [],
   },
   damages: {
-    type: Array as PropType<SelectOption[]>, // Assuming this is for damage_type select
+    type: Array as PropType<SelectOption[]>,
     default: () => [],
   },
   weapons: {
-    type: Array as PropType<SelectOption[]>, // Assuming for weapon_type select
+    type: Array as PropType<SelectOption[]>,
     default: () => [],
   },
   wondrousItems: {
     type: Array as PropType<SelectOption[]>,
     default: () => [],
   },
-  // Functions & State from Parent
   onFormSubmit: {
     type: Function,
     required: true,
   },
   initialValues: {
-    type: Object as PropType<SelectOption>, // Or a more specific interface if form structure is fixed
+    type: Object as PropType<SelectOption>,
     required: true,
   },
   resolver: {
     type: Function,
     required: true,
   },
-  panelColapsed: { // Renamed prop from 'panelColapsed' for consistency
+  panelCollapsed: {
     type: Boolean,
-    required: true, // Parent controls initial state
+    required: true,
   },
-  loading: { // Added loading prop, assuming it's needed for buttons etc.
+  loading: {
       type: Boolean,
       default: false,
   }
 });
 
 const type = ref('');
-const panelColapsed = ref(props.panelColapsed);
+const panelCollapsed = ref(props.panelCollapsed);
 const search = ref(route.params.id ? false : true);
 const header = ref(!search.value ? 'generate.items.header' : 'search.items.header');
 const button = ref(!search.value ? 'common.generate' : 'search.title');
 const panel = ref(null);
 
-watch(() => props.panelColapsed, () => {
-  if (props.panelColapsed === true) {
+watch(() => props.panelCollapsed, () => {
+  if (props.panelCollapsed === true) {
     console.log('Panel is collapsed');
     panel.value.toggle();
   }
@@ -77,7 +75,7 @@ const changeType = (type_: Event) => {
 
 <template>
   <transition-fade group>
-    <Panel :header="$t(header)" class="w-full shadow-sm" toggleable :collapsed="panelColapsed" ref="panel">
+    <Panel :header="$t(header)" class="w-full shadow-sm" toggleable :collapsed="panelCollapsed" ref="panel">
       <Form v-slot="$form" :initialValues :resolver @submit="onFormSubmit" class="flex flex-col gap-4 w-full">
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-2">
           <div class="flex flex-col gap-1" key="type">
@@ -177,7 +175,7 @@ const changeType = (type_: Event) => {
             <Message v-if="$form.wondrousItems?.invalid" severity="error" size="small" variant="simple">{{ $form.wondrousItems.error?.message }}</Message>
           </div>
         </div>
-        <Button type="submit" severity="secondary" :label="$t(button)" :disabled="panelColapsed.value" :loading="loading" />
+        <Button type="submit" severity="secondary" :label="$t(button)" :disabled="panelCollapsed.value" :loading="loading" />
       </Form>
     </Panel>
   </transition-fade>

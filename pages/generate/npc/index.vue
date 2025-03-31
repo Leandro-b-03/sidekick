@@ -12,7 +12,7 @@ const offset = computed(() => (page.value - 1) * perPage.value);
 const total = ref(0);
 const npcs = ref([]);
 const loading = ref(true);
-const panelColapsed = ref(true);
+const panelCollapsed = ref(true);
 
 const { data: age, status: statusAge, error: errorAge, refresh: refreshAge, clear: clearAge } = await useAsyncData(
   'age',
@@ -115,7 +115,7 @@ const resolver = ({ values }) => {
 const onFormSubmit = async ({ values, valid }) => {
   if (!valid) return;
 
-  panelColapsed.value = true;
+  panelCollapsed.value = true;
   loading.value = true;
 
   let search = '';
@@ -142,48 +142,27 @@ const fetchDocuments = async () => {
     const { documents: npcsData, total: total_ } = await database.listDocuments(
       config.public.databaseID,
       config.public.npcCollectionID,
-      [ // The array of queries must be flat (an array of strings)
-        // Pagination and Sorting Queries
+      [
         Query.limit(perPage.value),
         Query.offset(offset.value),
         Query.orderDesc('$createdAt'),
 
-        // Dynamically generated Search Queries from the 'search' array
-        // Use the spread syntax (...) to add each element from the result of map
-        // into the main query array.
         ...search.map((item) => {
-          // Basic split by '='. Consider adding error handling if 'item' might not contain '='.
           const [key, value] = item.split('=');
 
           if (!key || value === undefined || key === "" || value === null) {
-            // Skip invalid search terms or throw an error
             console.warn(`Skipping invalid search term: ${item}`);
-            // Returning null or undefined here won't work directly with spread,
-            // Filter out invalid items *before* or *after* mapping if necessary.
-            // A simple approach is to just let Query.equal handle potential errors
-            // if key/value are bad, though Appwrite might throw.
-            // For now, we proceed assuming key/value are somewhat valid.
             return Query.isNotNull("name");
           }
 
-          // Appwrite's Query.equal expects the attribute name and an ARRAY of values.
-          // IMPORTANT: If you are querying a numeric field (like 'level'),
-          // you might need to convert the 'value' string to a number:
-          // return Query.equal(key, [Number(value)]);
-          // Assuming string values for now:
           if (value === 'false') {
             return Query.equal(key, [false]);
           } else if (value === 'true') {
             return Query.equal(key, [true]);
           }
 
-          // For other types, you might need to handle them accordingly.
-          // For example, if 'key' is a number, you might want to parse it:
-          // return Query.equal(key, [parseInt(value)]);
           return Query.equal(key, [value]);
         })
-        // If search terms could be invalid, you might filter *after* mapping:
-        // .filter(query => query !== null) // if you returned null for invalid items
       ]
     );
     npcs.value = npcsData;
@@ -211,7 +190,7 @@ watch(() => route.query, async () => {
 <template>
   <NPCForm
     :loading="loading"
-    :panelColapsed="panelColapsed"
+    :panelCollapsed="panelCollapsed"
     :age="age"
     :races="races"
     :gender="gender"

@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import defaultImage from '@/assets/images/npc/default_npc.webp';
+import type { NpcLocalState, CharacterDocument, CharacterDocumentSave } from '@/interfaces/npc.type';
+import type { SelectOption } from '@/interfaces/common.type';
 
 const { locale } = useNuxtApp().$i18n;
 const { database, ID } = useAppwrite();
@@ -8,42 +10,47 @@ const router = useRouter();
 const route = useRoute();
 
 const loading = ref(false);
-const panelColapsed = ref(false);
+const panelCollapsed = ref(false);
 
-const npc = reactive({
+const npc = reactive<NpcLocalState>({
   show: false,
+  image: defaultImage,
   name: '',
-  age: 0,
   race: '',
-  gender: '',
-  alignment: '',
-  level: 1,
   class_: '',
   job: '',
-  background: '',
-  sexOrientation: '',
-  appearance: '',
-  personality: '',
-  affiliations: '',
-  goal: '',
-  backstory: '',
-  languages: '',
-  savingThrows: '',
-  armourClass: 0,
+  armour_class: 0,
   initiative: '',
   speed: '',
-  hitPoints: 0,
+  hitPoints: '0',
   hitDice: '',
-  attr: {},
   description: '',
+  appearance: '',
+  languages: '',
+  savingThrows: '',
+  attr: null,
+  sexOrientation: '',
   appearance_: '',
-  created_at: '',
+  affiliation: '',
+  alignment: '',
+  background: '',
+  backstory: '',
+  gender: '',
+  goal: '',
+  personality: '',
+  items: null,
   enemy: false,
   secretPlot: '',
-  items: [],
-  spells: [],
+  spells: null,
   difficult: '',
-  image: defaultImage,
+  age: 0,
+  level: 1,
+  $id: '',
+  $createdAt: '',
+  $updatedAt: '',
+  $permissions: [],
+  $databaseId: '',
+  $collectionId: '',
 });
 
 const { data: age, status: statusAge, error: errorAge, refresh: refreshAge, clear: clearAge } = await useAsyncData(
@@ -110,6 +117,7 @@ const enemy = ref([
   { label: 'common.no', value: false },
   { label: 'common.yes', value: true }
 ]);
+
 const initialValues = reactive({
   age: age.value[0],
   race: races.value[0],
@@ -144,57 +152,88 @@ const resolver = ({ values }) => {
   return { values, errors };
 };
 
-const onFormSubmit = async ({ values, valid }) => {
+const onFormSubmit = async ({ values, valid }: { values: any, valid: boolean }) => {
   if (!valid) return;
 
-  panelColapsed.value = true;
+  panelCollapsed.value = true;
   loading.value = true;
   npc.show = true;
 
   try {
     const formData = new FormData();
     formData.append('generate', 'NPC');
-    Object.entries(values).map(([key, value]) => {
-      formData.append(key, value.value);
+    Object.entries(values).forEach(([key, valueObj]: [string, any]) => {
+        let api_key = key;
+        // if (key === 'class_') api_key = 'class';
+        if (valueObj && typeof valueObj === 'object' && 'value' in valueObj) {
+             formData.append(api_key, valueObj.value);
+        } else {
+             console.warn(`Unexpected value structure for key in onFormSubmit: ${key}`, valueObj);
+        }
     });
 
-    const NPC = await $fetch('/api/core', { method: 'POST', body: formData });
+    const generatedNpcData = await $fetch('/api/core', { method: 'POST', body: formData });
 
-    Object.assign(npc, {
-      ...NPC,
-      age: parseInt(NPC.age, 10),
-      level: parseInt(NPC.level, 10),
-      armourClass: parseInt(NPC.armour_class, 10),
-      attr: NPC.attr,
-      items: NPC.items ? NPC.items : [],
-      spells: NPC.spells ? NPC.spells : [],
-      secretPlot: NPC.secret_plot,
-      sexOrientation: NPC.sex_orientation,
-      hitDice: NPC.hit_dice,
-      hitPoints: NPC.hit_points,
-      image: defaultImage,
-    });
+    const dataToSave: CharacterDocumentSave = {
+      name: generatedNpcData.name,
+      race: generatedNpcData.race,
+      class: generatedNpcData.class,
+      job: generatedNpcData.job,
+      armour_class: parseInt(generatedNpcData.armour_class, 10) || 0,
+      initiative: generatedNpcData.initiative,
+      speed: generatedNpcData.speed,
+      hit_points: String(generatedNpcData.hit_points || 0),
+      hit_dice: generatedNpcData.hit_dice,
+      description: generatedNpcData.description,
+      appearance: generatedNpcData.appearance,
+      languages: generatedNpcData.languages,
+      saving_throws: generatedNpcData.saving_throws,
+      sex_orientation: generatedNpcData.sex_orientation,
+      appearance_: generatedNpcData.appearance_,
+      affiliation: generatedNpcData.affiliation,
+      alignment: generatedNpcData.alignment,
+      background: generatedNpcData.background,
+      backstory: generatedNpcData.backstory,
+      gender: generatedNpcData.gender,
+      goal: generatedNpcData.goal,
+      personality: generatedNpcData.personality,
+      enemy: values.enemy.value,
+      secret_plot: generatedNpcData.secret_plot,
+      difficult: generatedNpcData.difficult,
+      age: parseInt(generatedNpcData.age, 10) || 0,
+      level: parseInt(generatedNpcData.level, 10) || 1,
+      attr: generatedNpcData.attr ? [JSON.stringify(generatedNpcData.attr)] : ['{}'],
+      items: generatedNpcData.items ? [JSON.stringify(generatedNpcData.items)] : ['{}'],
+      spells: generatedNpcData.spells ? [JSON.stringify(generatedNpcData.spells)] : ['{}'],
+    };
 
-    const response = await database.createDocument(
+    const response = await database.createDocument<Models.Document & CharacterDocument>(
       config.public.databaseID,
       config.public.npcCollectionID,
       ID.unique(),
-      {
-        ...NPC,
-        age: parseInt(NPC.age, 10),
-        level: parseInt(NPC.level, 10),
-        armour_class: parseInt(NPC.armour_class, 10),
-        attr: [JSON.stringify(NPC.attr)],
-        items: NPC.items ? [JSON.stringify(NPC.items)] : [],
-        spells: NPC.spells ? [JSON.stringify(NPC.spells)] : [],
-        enemy: values.enemy.value,
-      }
+      dataToSave
     );
+
+     Object.assign(npc, {
+         ...generatedNpcData,
+         $id: response.$id,
+         $createdAt: response.$createdAt,
+         $updatedAt: response.$updatedAt,
+         $databaseId: response.$databaseId,
+         $collectionId: response.$collectionId,
+         class: generatedNpcData.class,
+         hitPoints: parseInt(generatedNpcData.hit_points, 10) || 0,
+         armourClass: parseInt(generatedNpcData.armour_class, 10) || 0,
+         age: parseInt(generatedNpcData.age, 10) || 0,
+         level: parseInt(generatedNpcData.level, 10) || 1,
+         image: defaultImage,
+     });
 
     router.push({
       name: `generate-npc-id___${locale.value}`,
       params: { id: response.$id },
     });
+
   } catch (error) {
     console.error('Error creating NPC:', error);
   } finally {
@@ -202,22 +241,22 @@ const onFormSubmit = async ({ values, valid }) => {
   }
 };
 
-const onFileChange = (event) => {
-  const file = event.target.files[0];
+const onFileChange = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  const file = target.files?.[0];
   if (file) {
     const reader = new FileReader();
     reader.onload = (e) => {
-      npc.image = e.target.result;
+      npc.image = e.target?.result ?? null;
     };
     reader.readAsDataURL(file);
   }
 };
 
-onMounted(async () => {
+const getDocument = async () => {
   const id = route.params.id;
   if (id !== 'new') {
     npc.show = true;
-    loading.value = true;
     try {
       const response = await database.getDocument(
         config.public.databaseID,
@@ -240,22 +279,27 @@ onMounted(async () => {
         hitDice: response.hit_dice,
         hitPoints: response.hit_points,
       });
-      panelColapsed.value = true;
+      panelCollapsed.value = true;
     } catch (error) {
       console.error('Error fetching NPC:', error);
     } finally {
-      loading.value = false;
     }
   } else {
-    panelColapsed.value = false;
+    panelCollapsed.value = false;
   }
+}
+
+onMounted(async () => {
+  loading.value = true;
+  await getDocument();
+  loading.value = false;
 });
 </script>
 
 <template>
   <NPCForm
     :loading="loading"
-    :panelColapsed="panelColapsed"
+    :panelCollapsed="panelCollapsed"
     :age="age"
     :races="races"
     :gender="gender"

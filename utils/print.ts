@@ -1,11 +1,18 @@
 export const printSection = (html: HTMLElement, options: any = {}) => {
-  console.log('printSection', html, options);
+  let orientation = 'landscape';
+  if (options.portrait) orientation = 'portrait';
+  
   if (html) {
     var html_ = html.cloneNode(true) as HTMLElement;
     const popupWindow = window.open('', '_blank');
 
-    html_.classList.remove('lg:w-[900px]');
-    html_.classList.add('lg:w-[550px]');
+    let htmlContent = html_.outerHTML;
+    if (!options.portrait) {
+      html_.classList.remove('lg:w-[900px]');
+      html_.classList.add('lg:w-[550px]');
+
+      htmlContent = html_.outerHTML.replace(/text-xs/g, 'text-[7px]').replace(/<h2 class="font-semibold">/g, '<h2 class="font-semibold text-[10px]">').replace(/<th colspan="2" class="bg-gray-200 p-1 text-center rounded-t">/g, '<th colspan="2" class="bg-gray-200 p-1 text-center rounded-t text-[10px]">')
+    }
 
     if (popupWindow) {
       popupWindow.document.open();
@@ -16,7 +23,7 @@ export const printSection = (html: HTMLElement, options: any = {}) => {
             <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"><\/script>
             <style>
               @page {
-                size: A4 landscape;
+                size: A4 ${orientation}; /* Use A4 size */
                 margin: 0; /* Important for full-page use */
               }
 
@@ -52,7 +59,7 @@ export const printSection = (html: HTMLElement, options: any = {}) => {
                   background-color: white; /* Ensure white background for printing */
               }
               .column {
-                  width: 50%;
+                  width: ${orientation === 'landscape' ? '50%' : '100%'};
                   height: 100%;
                   box-sizing: border-box;
                   margin-top: 10px;
@@ -63,7 +70,7 @@ export const printSection = (html: HTMLElement, options: any = {}) => {
           <body>
             <div class="page">
               <div class="column">
-                ${html_.outerHTML.replace(/text-xs/g, 'text-[7px]').replace(/<h2 class="font-semibold">/g, '<h2 class="font-semibold text-[10px]">').replace(/<th colspan="2" class="bg-gray-200 p-1 text-center rounded-t">/g, '<th colspan="2" class="bg-gray-200 p-1 text-center rounded-t text-[10px]">')}
+                ${htmlContent}
               </div>
             </div>
           </body>

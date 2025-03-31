@@ -1,33 +1,100 @@
 <script setup lang="ts">
+import type { SelectOption } from '@/interfaces/common.type';
+
+  
 const route = useRoute();
 
-const props = withDefaults(defineProps<{
-  age: any,
-  races: any,
-  gender: any,
-  alignments: any,
-  levels: any,
-  classesData: any,
-  jobs: any,
-  backgrounds: any,
-  sexOrientations: any,
-  appearances: any,
-  personalities: any,
-  affiliations: any,
-  goals: any,
-  backstories: any,
-  enemy: any,
-  difficulty: any,
-  onFormSubmit: any,
-  panelColapsed: boolean,
-  loading: boolean,
-  resolver: any,
-  initialValues: any,
-}>(), {
-  panelColapsed: false,
+const props = defineProps({
+  age: {
+    type: Array as PropType<SelectOption[]>,
+    default: () => [],
+  },
+  races: {
+    type: Array as PropType<SelectOption[]>,
+    default: () => [],
+  },
+  gender: {
+    type: Array as PropType<SelectOption[]>,
+    default: () => [],
+  },
+  alignments: {
+    type: Array as PropType<SelectOption[]>,
+    default: () => [],
+  },
+  levels: {
+    type: Array as PropType<SelectOption[]>,
+    default: () => [],
+  },
+  classesData: {
+    type: Array as PropType<SelectOption[]>,
+    default: () => [],
+  },
+  jobs: {
+    type: Array as PropType<SelectOption[]>,
+    default: () => [],
+  },
+  backgrounds: {
+    type: Array as PropType<SelectOption[]>,
+    default: () => [],
+  },
+  sexOrientations: {
+    type: Array as PropType<SelectOption[]>,
+    default: () => [],
+  },
+  appearances: {
+    type: Array as PropType<SelectOption[]>,
+    default: () => [],
+  },
+  personalities: {
+    type: Array as PropType<SelectOption[]>,
+    default: () => [],
+  },
+  affiliations: {
+    type: Array as PropType<SelectOption[]>,
+    default: () => [],
+  },
+  goals: {
+    type: Array as PropType<SelectOption[]>,
+    default: () => [],
+  },
+  backstories: {
+    type: Array as PropType<SelectOption[]>,
+    default: () => [],
+  },
+  enemy: { // Boolean options
+    type: Array as PropType<SelectOption[]>,
+    default: () => [],
+  },
+  difficulty: {
+    type: Array as PropType<SelectOption[]>,
+    default: () => [],
+  },
+
+  // Functions & State from Parent - Mark as required
+  // Funções e Estado do Pai - Marcados como obrigatórios
+  onFormSubmit: {
+    type: Function,
+    required: true,
+  },
+  resolver: {
+    type: Function,
+    required: true,
+  },
+  initialValues: {
+    type: Object,
+    required: true,
+  },
+  panelCollapsed: { // Note: Corrected spelling here
+    type: Boolean,
+    default: false, // Default value for boolean
+  },
+  loading: {
+    type: Boolean,
+    default: false, // Default value for boolean
+  }
 });
 
-const panelColapsed = ref(props.panelColapsed);
+const panelCollapsed = ref(props.panelCollapsed);
 
 const search = ref(route.params.id ? false : true);
 
@@ -35,8 +102,8 @@ const header = ref(!search.value ? 'generate.npcs.header' : 'search.npcs.header'
 const button = ref(!search.value ? 'common.generate' : 'search.title');
 const panel = ref(null);
 
-watch(() => props.panelColapsed, () => {
-  if (props.panelColapsed === true) {
+watch(() => props.panelCollapsed, () => {
+  if (props.panelCollapsed === true) {
     console.log('Panel is collapsed');
     panel.value.toggle();
   }
@@ -44,7 +111,7 @@ watch(() => props.panelColapsed, () => {
 </script>
 
 <template>
-  <Panel :header="$t(header)" class="w-full shadow-sm" toggleable :collapsed="props.panelColapsed" ref="panel" @toggle="panelColapsed = !panelColapsed">
+  <Panel :header="$t(header)" class="w-full shadow-sm" toggleable :collapsed="props.panelCollapsed" ref="panel" @toggle="panelCollapsed = !panelCollapsed">
     <Form v-slot="$form" :initialValues :resolver @submit="props.onFormSubmit" class="flex flex-col gap-4 w-full">
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-2">
         <div class="flex flex-col gap-1">
@@ -304,7 +371,7 @@ watch(() => props.panelColapsed, () => {
           <Message v-if="$form.difficulty?.invalid" severity="error" size="small" variant="simple">{{ $form.difficulty.error?.message }}</Message>
         </div>
       </div>
-      <Button type="submit" severity="secondary" :label="$t(button)" :disabled="panelColapsed" :loading="props.loading" />
+      <Button type="submit" severity="secondary" :label="$t(button)" :disabled="panelCollapsed" :loading="props.loading" />
     </Form>
   </Panel>
 </template>

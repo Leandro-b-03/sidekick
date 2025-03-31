@@ -12,7 +12,7 @@ const rows = computed(() => (page.value - 1) * perPage.value);
 const offset = computed(() => (page.value - 1) * perPage.value);
 const total = ref(0);
 const loading = ref(false);
-const panelColapsed = ref(true);
+const panelCollapsed = ref(true);
 
 const { data: classesData, status: statusClasses, error: errorClasses, refresh: refreshClasses, clear: clearClasses } = await useAsyncData(
   'classes',
@@ -64,7 +64,7 @@ const resolver = ({ values }) => {
 const onFormSubmit = async ({ values, valid }) => {
   if (!valid) return;
 
-  panelColapsed.value = true;
+  panelCollapsed.value = true;
   loading.value = true;
 
   let search = '';
@@ -143,7 +143,7 @@ watch(() => route.query, async () => {
     :weapons="weapons"
     :initialValues="initialValues"
     :resolver="resolver"
-    :panelColapsed="panelColapsed"
+    :panelCollapsed="panelCollapsed"
     />
 
   <ITEMSearchCard 

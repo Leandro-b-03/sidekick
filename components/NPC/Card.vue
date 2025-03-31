@@ -1,31 +1,71 @@
 <script setup lang="ts">
-const props = defineProps<{
-  npc: any;
-  loading: boolean;
-  onFileChange: any;
-}>();
+import type { NpcLocalState } from '@/interfaces/npc.type';
+
+const props = defineProps({
+  loading: {
+    type: Boolean,
+    default: false,
+  },
+  npc: {
+    type: Object as PropType<NpcLocalState>,
+    required: true,
+  },
+  onFileChange: {
+    type: Function as PropType<(file: File) => void>,
+    required: true,
+  },
+});
 
 const showButtons = ref(false);
 const file = ref(null);
 const pdfSection = ref<HTMLElement | null>(null);
 
 
-const openUpload = () => {
-  file.value.click();
+/**
+ * Programmatically triggers the click event on the hidden file input element
+ * to open the file selection dialog.
+ */
+ const openUpload = () => {
+  // Safety check: ensure the ref is attached to an element
+  if (file.value) {
+    file.value.click();
+  } else {
+    console.warn('File input reference is not available.');
+  }
 };
 
+/**
+ * Calls the utility function to generate a PDF from the specified HTML section.
+ */
 const generatePDF = () => {
-  printSection(pdfSection.value);
+  // Safety check: ensure the ref is attached to an element
+  if (pdfSection.value) {
+    printSection(pdfSection.value, { portrait: true }); // Call your print utility
+  } else {
+    console.warn('PDF section reference is not available.');
+  }
 };
 
+/**
+ * Calculates the proficiency bonus based on character level according to D&D 5e rules.
+ * Calcula o bônus de proficiência baseado no nível do personagem (regras D&D 5e).
+ * @param {number | undefined | null} level - The character's level. O nível do personagem.
+ * @returns {string} The proficiency bonus as a string (e.g., "2", "3"). O bônus como string.
+ */
+const proficiency = (level: number | undefined | null): string => { // Corrected spelling: proficiency
+  const lvl = level ?? 0; // Handle null or undefined level, defaulting to 0
 
-const proeficiency = (level: number): string => {
-  if (level >= 1 && level <= 4) return '2';
-  if (level >= 5 && level <= 8) return '3';
-  if (level >= 9 && level <= 12) return '4';
-  if (level >= 13 && level <= 16) return '5';
-  if (level >= 17 && level <= 20) return '6';
-  return '10';
+  if (lvl >= 1 && lvl <= 4) return '2';
+  if (lvl >= 5 && lvl <= 8) return '3';
+  if (lvl >= 9 && lvl <= 12) return '4';
+  if (lvl >= 13 && lvl <= 16) return '5';
+  if (lvl >= 17 && lvl <= 20) return '6';
+
+  // Handle levels outside 1-20. Returning "10" seems arbitrary.
+  // Consider returning "0" or "+0" or handling appropriately.
+  // Mantendo "10" como no código original, mas considere se é o correto.
+  console.warn(`Calculating proficiency for unexpected level: ${lvl}`);
+  return '10'; // Or maybe '0'?
 };
 </script>
 
@@ -41,7 +81,10 @@ const proeficiency = (level: number): string => {
           <Skeleton v-if="loading" width="100px" />
           <span v-else>{{ $t('generate.npcs.description') }}</span>
         </div>
-        <div class="flex flex-col lg:flex-row">
+        <div class="relative">
+          <div class="absolute left-2 top-2 w-full">
+            <Button label="gerar PDF" @click="generatePDF" />
+          </div>
           <div class="flex justify-center items-center inset-shadow-sm w-full h-auto rounded inset-shadow-gray-500 striped-bg">
             <div class="grid grid-cols-1 w-full lg:w-[900px] h-auto lg:h-auto bg-white shadow rounded overflow-hidden content-between" ref="pdfSection">
               <div class="header bg-gray-800 p-4 flex flex-row justify-between items-center mb-1">
@@ -145,10 +188,10 @@ const proeficiency = (level: number): string => {
                           </td>
                         </tr>
                         <tr>
-                          <td class="bg-gray-200 p-1 text-right">{{ $t('common.proeficiency') }}</td>
+                          <td class="bg-gray-200 p-1 text-right">{{ $t('common.proficiency') }}</td>
                           <td class="bg-gray-100 p-1">
                             <Skeleton v-if="loading" width="80px" height="15px" />
-                            <span v-else>+{{ proeficiency(npc.level) }}</span>
+                            <span v-else>+{{ proficiency(npc.level) }}</span>
                           </td>
                         </tr>
                         <tr>

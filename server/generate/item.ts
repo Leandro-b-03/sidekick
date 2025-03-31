@@ -50,8 +50,6 @@ const generateItem = (
     weapon: weapon,
   };
 
-  console.log(item);
-
   let prompt = `Create an ITEM with the following traits: ${itemToReadableString(item)}`;
 
   const values = {

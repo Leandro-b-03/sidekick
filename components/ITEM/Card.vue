@@ -19,16 +19,37 @@ const op = ref(null);
 const file = ref(null);
 const pdfSection = ref<HTMLElement | null>(null);
 
-const togglePopover = (event) => {
+/*
+ * Function to handle file change event
+ * @param {Event} event - The file input change event
+ */
+const togglePopover = (event: Event) => {
   op.value.toggle(event);
 }
 
-const openUpload = () => {
-  file.value.click();
+/**
+ * Programmatically triggers the click event on the hidden file input element
+ * to open the file selection dialog.
+ */
+ const openUpload = () => {
+  // Safety check: ensure the ref is attached to an element
+  if (file.value) {
+    file.value.click();
+  } else {
+    console.warn('File input reference is not available.');
+  }
 };
 
+/**
+ * Calls the utility function to generate a PDF from the specified HTML section.
+ */
 const generatePDF = () => {
-  printSection(pdfSection.value);
+  // Safety check: ensure the ref is attached to an element
+  if (pdfSection.value) {
+    printSection(pdfSection.value, { portrait: true }); // Call your print utility
+  } else {
+    console.warn('PDF section reference is not available.');
+  }
 };
 </script>
 
@@ -61,9 +82,9 @@ const generatePDF = () => {
                   <Skeleton v-if="loading" width="100px" height="15px" class="mb-1" />
                   <small v-else class="text-gray-50">{{ $t(`rarities.${item.rarity}`) }}</small>
                   <Skeleton v-if="loading" width="100px" height="15px" class="mb-1" />
-                  <small v-else class="text-gray-50">{{ $t(`classes.${item.class_}`) }}</small>
+                  <small v-else class="text-gray-50">{{ $t(`classes.${item.class}`) }}</small>
                   <Skeleton v-if="loading" width="100px" height="15px" />
-                  <small v-else class="text-gray-50">{{ item.weaponType ? $t(`weapons.${item.weaponType}`) : item.wondrousItem ? $t(`wondrous_item.${item.wondrousItem}`) : '-' }}</small>
+                  <small v-else class="text-gray-50">{{ item.weaponType ? $t(`weapons.${item.weaponType}`) : item.wondrousItem ? $t(`wondrous_items.${item.wondrousItem}`) : '-' }}</small>
                 </div>
               </div>
               <div class="body px-2">
