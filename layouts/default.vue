@@ -1,4 +1,5 @@
 <template>
+  <Analytics/>
   <div class="app">
     <Toast />
     <AppHeader />
