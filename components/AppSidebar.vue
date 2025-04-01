@@ -122,7 +122,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <aside class="layout-sidebar m-2 w-full md:w-60 fixed">
+  <aside class="layout-sidebar m-2 hidden md:w-60 lg:block fixed">
     <PanelMenu v-model:expandedKeys="expandedKeys" :model="items" class="w-full">
       <template #item="{ item }">
         <NuxtLink v-ripple class="flex items-center justify-between px-4 py-2 cursor-pointer group">

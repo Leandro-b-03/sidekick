@@ -72,12 +72,12 @@ const proficiency = (level: number | undefined | null): string => { // Corrected
 <template>
   <TransitionGroup name="fade">
     <div v-if="npc.show" class="bg-surface-50 dark:bg-surface-950 mt-4 rounded" key="npc">
-      <div class="bg-surface-0 dark:bg-surface-900 p-6 shadow rounded">
-        <div class="text-3xl font-medium text-surface-900 dark:text-surface-0 mb-2">
+      <div class="bg-surface-0 dark:bg-surface-900 lg:p-6 shadow rounded">
+        <div class="text-3xl font-medium text-surface-900 dark:text-surface-0 mb-2 ml-2 lg:ml-0">
           <Skeleton v-if="loading" height="25px" width="150px" />
           <span v-else>{{ $t('generate.npcs.title') }}</span>
         </div>
-        <div class="font-medium text-surface-500 dark:text-surface-300 mb-4">
+        <div class="font-medium text-surface-500 dark:text-surface-300 mb-4 ml-2 lg:ml-0">
           <Skeleton v-if="loading" width="100px" />
           <span v-else>{{ $t('generate.npcs.description') }}</span>
         </div>
@@ -104,7 +104,7 @@ const proficiency = (level: number | undefined | null): string => { // Corrected
                 </div>
               </div>
               <div class="body px-2">
-                <div class="grid grid-cols-2 gap-2">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-2">
                   <div>
                     <div class="flex flex-row justify-start">
                       <div class="flex flex-row justify-start mr-2 w-[114px] flex-none">
