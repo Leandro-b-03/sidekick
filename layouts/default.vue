@@ -1,5 +1,6 @@
 <template>
   <Analytics/>
+  <SpeedInsights/>
   <div class="app">
     <Toast />
     <AppHeader />
