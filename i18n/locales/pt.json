@@ -133,7 +133,9 @@
     "cards": {
       "title": "Bem-vindo ao site game master",
       "description": "Aqui você pode gerenciar seus NPCs, itens e inimigos, além de gravar as iniciativas de combate",
-      "npcs": "Ultimos NPCs criados"
+      "npcs": "Ultimos NPCs criados",
+      "items": "Ultimos Itens criados",
+      "combats": "Ultimos Combates criados"
     }
   },
   "about": {
