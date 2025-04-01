@@ -11,7 +11,7 @@ const loading = ref(false);
 
 const fetchNPC = async () => {
   try {
-    const { documents: npcsData } = await database.listDocuments(databaseID, config.public.npcCollectionID, [ Query.limit(4)]);
+    const { documents: npcsData } = await database.listDocuments(databaseID, config.public.npcCollectionID, [ Query.limit(4), Query.orderDesc('$createdAt') ]);
     npcs.value = npcsData;
   } catch (error) {
     console.log(error);
@@ -20,7 +20,7 @@ const fetchNPC = async () => {
 
 const fetchItems = async () => {
   try {
-    const { documents: itemsData } = await database.listDocuments(databaseID, config.public.itemsCollectionID, [ Query.limit(4)]);
+    const { documents: itemsData } = await database.listDocuments(databaseID, config.public.itemsCollectionID, [ Query.limit(4), Query.orderDesc('$createdAt') ]);
     items.value = itemsData;
   } catch (error) {
     console.log(error);
@@ -29,7 +29,7 @@ const fetchItems = async () => {
 
 const fetchCombats = async () => {
   try {
-    const { documents: combatsData } = await database.listDocuments(databaseID, config.public.combatsCollectionID, [ Query.limit(4)]);
+    const { documents: combatsData } = await database.listDocuments(databaseID, config.public.combatsCollectionID, [ Query.limit(4), Query.orderDesc('$createdAt') ]);
     combats.value = combatsData;
   } catch (error) {
     console.log(error);
