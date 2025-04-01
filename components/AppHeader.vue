@@ -59,13 +59,13 @@ const itensTinyScreen = ref([
     icon: 'pi pi-shield',
     items: [
       {
-        label: 'combat.initiative.list',
+        label: 'combat.list',
         command: () => {
           router.push({ path: '/combat' });
         }
       },
       {
-        label: 'combat.initiative.create',
+        label: 'combat.create',
         command: () => {
           router.push({ path: '/combat/new' });
         }
