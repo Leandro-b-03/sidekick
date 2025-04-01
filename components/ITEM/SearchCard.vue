@@ -31,7 +31,7 @@ const props = defineProps<{
             </div>
             <div class="mb-4">
               <Skeleton v-if="loading" width="100px" height="15px" class="mb-1" />
-              <h4 v-else class="!text-[12px]">{{ item.weapon_type ? $t(`weapons.${item.weapon_type}`) : item.wondrous_item ? $t(`wondrous_item.${item.wondrous_item}`) : '-' }}</h4>
+              <h4 v-else class="!text-[12px]">{{ item.weapon_type ? $t(`weapons.${item.weapon_type}`) : item.wondrous_item ? $t(`wondrous_items.${item.wondrous_item}`) : '-' }}</h4>
             </div>
             <div>
               <div class="mb-4 text-justify bg-gray-100 p-1 rounded border border-gray-200">
