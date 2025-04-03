@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import defaultImage from '@/assets/images/npc/default_npc.webp';
-import type { NpcLocalState, CharacterDocument, CharacterDocumentSave } from '@/interfaces/npc.type';
+import type { NpcLocalState, CharacterDocument, CharacterDocumentSaveAppwrite, CharacterDocumentSaveSupabase } from '@/interfaces/npc.type';
 import type { SelectOption } from '@/interfaces/common.type';
 
+const supabase = useSupabaseClient();
 const { locale } = useNuxtApp().$i18n;
 const { database, ID } = useAppwrite();
 const config = useRuntimeConfig();
@@ -152,6 +153,39 @@ const resolver = ({ values }) => {
   return { values, errors };
 };
 
+const saveAppwrite = async (data: CharacterDocumentSaveAppwrite) => {
+  try {
+    const response = await database.createDocument<CharacterDocument>(
+      config.public.databaseID,
+      config.public.npcCollectionID,
+      ID.unique(),
+      data
+    );
+    return response;
+  } catch (error) {
+    console.error('Error saving document:', error);
+    throw error;
+  }
+};
+
+const saveSupabase = async (data: CharacterDocumentSaveSupabase) => {
+  try {
+    const { data: response, error } = await supabase
+      .from('npcs')
+      .insert([data])
+      .select('*')
+      .single();
+
+    if (error) {
+      throw error;
+    }
+    return response;
+  } catch (error) {
+    console.error('Error saving document:', error);
+    throw error;
+  }
+};
+
 const onFormSubmit = async ({ values, valid }: { values: any, valid: boolean }) => {
   if (!valid) return;
 
@@ -174,7 +208,7 @@ const onFormSubmit = async ({ values, valid }: { values: any, valid: boolean }) 
 
     const generatedNpcData = await $fetch('/api/core', { method: 'POST', body: formData });
 
-    const dataToSave: CharacterDocumentSave = {
+    const dataToSave: CharacterDocumentSaveAppwrite = {
       name: generatedNpcData.name,
       race: generatedNpcData.race,
       class: generatedNpcData.class,
@@ -207,12 +241,7 @@ const onFormSubmit = async ({ values, valid }: { values: any, valid: boolean }) 
       spells: generatedNpcData.spells ? [JSON.stringify(generatedNpcData.spells)] : ['{}'],
     };
 
-    const response = await database.createDocument<Models.Document & CharacterDocument>(
-      config.public.databaseID,
-      config.public.npcCollectionID,
-      ID.unique(),
-      dataToSave
-    );
+    const response = await saveAppwrite(dataToSave);
 
      Object.assign(npc, {
          ...generatedNpcData,
@@ -292,6 +321,20 @@ const getDocument = async () => {
 onMounted(async () => {
   loading.value = true;
   await getDocument();
+  let data: CharacterDocumentSaveSupabase = {
+    ...npc,
+    armour_class: npc.armourClass,
+    hit_dice: npc.hitDice,
+    hit_points: npc.hitPoints,
+    saving_throws: npc.savingThrows,
+    appearance_description: npc.appearance_,
+    sex_orientation: npc.sexOrientation,
+    secret_plot: npc.secretPlot,
+  }
+  const { $id, $createdAt, $updatedAt, $permissions, $databaseId, $collectionId, appearance_, armourClass, class_, hitPoints, hitDice, sexOrientation, savingThrows, secretPlot, image, show, ...filteredData } = data;
+  data = filteredData;
+  console.log('Filtered data:', data);
+  await saveSupabase(data);
   loading.value = false;
 });
 </script>

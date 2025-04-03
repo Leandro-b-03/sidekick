@@ -75,7 +75,7 @@ export interface NpcLocalState {
 }
 
 // 1. Interface representing the structure stored in Appwrite
-export interface CharacterDocumentSave {
+export interface CharacterDocumentSaveAppwrite {
   name: string;
   race: string;
   class: string; // Using 'class' as it's the Appwrite attribute name
@@ -103,6 +103,39 @@ export interface CharacterDocumentSave {
   enemy: boolean;
   secret_plot: string;
   spells: string[]; // Contains JSON string of SpellSet (or empty array)
+  difficult: string;
+  age: number; // Stored as number
+  level: number; // Stored as number
+}
+
+export interface CharacterDocumentSaveSupabase {
+  name: string;
+  race: string;
+  class: string; // Using 'class' as it's the Appwrite attribute name
+  job: string;
+  armour_class: number;
+  initiative: string;
+  speed: string;
+  hit_points: string; // Stored as string in Appwrite
+  hit_dice: string;
+  description: string;
+  appearance: string;
+  languages: string;
+  saving_throws: string;
+  attr: []; // Contains JSON string of AttributeSet
+  sex_orientation: string;
+  appearance_description: string; // Detailed appearance description
+  affiliation: string;
+  alignment: string;
+  background: string;
+  backstory: string;
+  gender: string;
+  goal: string;
+  personality: string;
+  items: []; // Contains JSON string of ItemSet (or empty array)
+  enemy: boolean;
+  secret_plot: string;
+  spells: []; // Contains JSON string of SpellSet (or empty array)
   difficult: string;
   age: number; // Stored as number
   level: number; // Stored as number
