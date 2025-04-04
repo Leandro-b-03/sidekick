@@ -16,3 +16,32 @@ export const scrollToTop = (): void => {
     behavior: 'smooth',
   });
 }
+
+export const generateSlug = (name: string): string => {
+  return name.normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+          .replace(/[^a-zA-Z0-9]+/g, '-') // Replace non-alphanumeric characters with hyphens
+          .replace(/-+/g, '-') // Replace multiple hyphens with a single hyphen
+          .replace(/^-|-$/g, '') // Trim hyphens from both ends
+          .toLowerCase();
+}
+
+
+
+export const save = async (data: any, table: string, supabase: any) => {
+  try {
+    const { data: response, error } = await supabase
+      .from(table)
+      .insert([data])
+      .select('*')
+      .single();
+
+    if (error) {
+      throw error;
+    }
+    return response;
+  } catch (error) {
+    console.error('Error saving document:', error);
+    throw error;
+  }
+};

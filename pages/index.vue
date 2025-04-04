@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { database, Query } = useAppwrite();
+const supabase = useSupabaseClient();
 const config = useRuntimeConfig();
 
 const npcs = ref([]);
@@ -11,8 +11,13 @@ const loading = ref(false);
 
 const fetchNPC = async () => {
   try {
-    const { documents: npcsData } = await database.listDocuments(databaseID, config.public.npcCollectionID, [ Query.limit(4), Query.orderDesc('$createdAt') ]);
-    npcs.value = npcsData;
+    const { data } = await supabase
+      .from('npcs')
+      .select('*')
+      .limit(4)
+      .order('created_at', { ascending: false });
+
+    npcs.value = data;
   } catch (error) {
     console.log(error);
   }
@@ -20,8 +25,13 @@ const fetchNPC = async () => {
 
 const fetchItems = async () => {
   try {
-    const { documents: itemsData } = await database.listDocuments(databaseID, config.public.itemsCollectionID, [ Query.limit(4), Query.orderDesc('$createdAt') ]);
-    items.value = itemsData;
+    const { data } = await supabase
+      .from('items')
+      .select('*')
+      .limit(4)
+      .order('created_at', { ascending: false });
+
+    items.value = data;
   } catch (error) {
     console.log(error);
   }
@@ -29,8 +39,15 @@ const fetchItems = async () => {
 
 const fetchCombats = async () => {
   try {
-    const { documents: combatsData } = await database.listDocuments(databaseID, config.public.combatsCollectionID, [ Query.limit(4), Query.orderDesc('$createdAt') ]);
-    combats.value = combatsData;
+    const { data } = await supabase
+      .from('combats')
+      .select('*')
+      .limit(4)
+      .order('created_at', { ascending: false });
+
+    combats.value = data;
+
+    console.log(combats.value);
   } catch (error) {
     console.log(error);
   }

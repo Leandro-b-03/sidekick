@@ -20,6 +20,7 @@ const showButtons = ref(false);
 const file = ref(null);
 const pdfSection = ref<HTMLElement | null>(null);
 
+console.log('NPC Card', props.npc);
 
 /**
  * Programmatically triggers the click event on the hidden file input element
@@ -98,7 +99,7 @@ const proficiency = (level: number | undefined | null): string => { // Corrected
                   <Skeleton v-if="loading" width="100px" height="15px" class="mb-1" />
                   <small v-else class="text-gray-50">{{ $t(`races.${npc.race}`) }}</small>
                   <Skeleton v-if="loading" width="100px" height="15px" class="mb-1" />
-                  <small v-else class="text-gray-50">{{ $t(`classes.${npc.class_}`) }}</small>
+                  <small v-else class="text-gray-50">{{ $t(`classes.${npc.class}`) }}</small>
                   <Skeleton v-if="loading" width="100px" height="15px" />
                   <small v-else class="text-gray-50">{{ npc.job ? $t(`jobs.${npc.job}`) : '-' }}</small>
                 </div>
@@ -286,7 +287,7 @@ const proficiency = (level: number | undefined | null): string => { // Corrected
                     </div>
                     <div class="text-justify text-xs p-2">
                       <Skeleton v-if="loading" width="100%" height="100px" />
-                      <p v-else>{{ npc.appearance_ }}</p>
+                      <p v-else>{{ npc.appearanceDescription	 }}</p>
                     </div>
                   </div>
                   <div class="rounded bg-gray-100 overflow-hidden mb-2">

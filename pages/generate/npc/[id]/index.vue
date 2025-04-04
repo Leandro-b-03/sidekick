@@ -1,25 +1,26 @@
 <script setup lang="ts">
 import defaultImage from '@/assets/images/npc/default_npc.webp';
-import type { NpcLocalState, CharacterDocument, CharacterDocumentSave } from '@/interfaces/npc.type';
+import type { NpcLocalState, CharacterDocument } from '@/interfaces/npc.type';
 import type { SelectOption } from '@/interfaces/common.type';
 
+const supabase = useSupabaseClient();
 const { locale } = useNuxtApp().$i18n;
-const { database, ID } = useAppwrite();
 const config = useRuntimeConfig();
 const router = useRouter();
 const route = useRoute();
 
-const loading = ref(false);
-const panelCollapsed = ref(false);
+const loading = ref(true);
+const panelCollapsed = ref(true);
 
 const npc = reactive<NpcLocalState>({
   show: false,
   image: defaultImage,
+  slug: '',
   name: '',
   race: '',
-  class_: '',
+  class: '',
   job: '',
-  armour_class: 0,
+  armourClass: 0,
   initiative: '',
   speed: '',
   hitPoints: '0',
@@ -28,9 +29,9 @@ const npc = reactive<NpcLocalState>({
   appearance: '',
   languages: '',
   savingThrows: '',
-  attr: null,
+  attr: [],
   sexOrientation: '',
-  appearance_: '',
+  appearanceDescription: '',
   affiliation: '',
   alignment: '',
   background: '',
@@ -38,19 +39,13 @@ const npc = reactive<NpcLocalState>({
   gender: '',
   goal: '',
   personality: '',
-  items: null,
+  items: [],
   enemy: false,
   secretPlot: '',
-  spells: null,
+  spells: [],
   difficult: '',
   age: 0,
   level: 1,
-  $id: '',
-  $createdAt: '',
-  $updatedAt: '',
-  $permissions: [],
-  $databaseId: '',
-  $collectionId: '',
 });
 
 const { data: age, status: statusAge, error: errorAge, refresh: refreshAge, clear: clearAge } = await useAsyncData(
@@ -174,7 +169,8 @@ const onFormSubmit = async ({ values, valid }: { values: any, valid: boolean }) 
 
     const generatedNpcData = await $fetch('/api/core', { method: 'POST', body: formData });
 
-    const dataToSave: CharacterDocumentSave = {
+    const dataToSave: CharacterDocument = {
+      slug: generateSlug(generatedNpcData.name),
       name: generatedNpcData.name,
       race: generatedNpcData.race,
       class: generatedNpcData.class,
@@ -189,7 +185,7 @@ const onFormSubmit = async ({ values, valid }: { values: any, valid: boolean }) 
       languages: generatedNpcData.languages,
       saving_throws: generatedNpcData.saving_throws,
       sex_orientation: generatedNpcData.sex_orientation,
-      appearance_: generatedNpcData.appearance_,
+      appearance_description: generatedNpcData.appearance_,
       affiliation: generatedNpcData.affiliation,
       alignment: generatedNpcData.alignment,
       background: generatedNpcData.background,
@@ -202,36 +198,29 @@ const onFormSubmit = async ({ values, valid }: { values: any, valid: boolean }) 
       difficult: generatedNpcData.difficult,
       age: parseInt(generatedNpcData.age, 10) || 0,
       level: parseInt(generatedNpcData.level, 10) || 1,
-      attr: generatedNpcData.attr ? [JSON.stringify(generatedNpcData.attr)] : ['{}'],
-      items: generatedNpcData.items ? [JSON.stringify(generatedNpcData.items)] : ['{}'],
-      spells: generatedNpcData.spells ? [JSON.stringify(generatedNpcData.spells)] : ['{}'],
+      attr: generatedNpcData.attr,
+      items: generatedNpcData.items,
+      spells: generatedNpcData.spells,
     };
 
-    const response = await database.createDocument<Models.Document & CharacterDocument>(
-      config.public.databaseID,
-      config.public.npcCollectionID,
-      ID.unique(),
-      dataToSave
-    );
+    const response = await save(dataToSave, 'npcs', supabase);
 
-     Object.assign(npc, {
-         ...generatedNpcData,
-         $id: response.$id,
-         $createdAt: response.$createdAt,
-         $updatedAt: response.$updatedAt,
-         $databaseId: response.$databaseId,
-         $collectionId: response.$collectionId,
-         class: generatedNpcData.class,
-         hitPoints: parseInt(generatedNpcData.hit_points, 10) || 0,
-         armourClass: parseInt(generatedNpcData.armour_class, 10) || 0,
-         age: parseInt(generatedNpcData.age, 10) || 0,
-         level: parseInt(generatedNpcData.level, 10) || 1,
-         image: defaultImage,
-     });
+    Object.assign(npc, {
+      ...generatedNpcData,
+      slug: dataToSave.slug,
+      class: generatedNpcData.class,
+      hitPoints: parseInt(generatedNpcData.hit_points, 10) || 0,
+      armourClass: parseInt(generatedNpcData.armour_class, 10) || 0,
+      hitDice: generatedNpcData.hit_dice,
+      appearanceDescription: generatedNpcData.appearance_,
+      age: parseInt(generatedNpcData.age, 10) || 0,
+      level: parseInt(generatedNpcData.level, 10) || 1,
+      image: defaultImage,
+    });
 
     router.push({
       name: `generate-npc-id___${locale.value}`,
-      params: { id: response.$id },
+      params: { id: dataToSave.slug },
     });
 
   } catch (error) {
@@ -258,26 +247,27 @@ const getDocument = async () => {
   if (id !== 'new') {
     npc.show = true;
     try {
-      const response = await database.getDocument(
-        config.public.databaseID,
-        config.public.npcCollectionID,
-        id
-      );
+      const { data, error } = await supabase
+        .from('npcs')
+        .select('*')
+        .eq('slug', id)
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      const response = data as CharacterDocument;
+      const { appearance_description, armour_class, hit_points, hit_dice, sex_orientation, saving_throws, secret_plot, ...filteredNPC } = response;
       
       Object.assign(npc, {
-        ...response,
-        age: parseInt(response.age, 10),
-        armourClass: parseInt(response.armour_class, 10),
-        class_: response.class,
-        level: parseInt(response.level, 10),
-        attr: JSON.parse(response.attr[0]),
-        items: response.items[0] ? JSON.parse(response.items[0]) : [],
-        spells: response.spells[0] ? JSON.parse(response.spells[0]) : [],
+        ...filteredNPC,
         secretPlot: response.secret_plot,
         savingThrows: response.saving_throws,
         sexOrientation: response.sex_orientation,
         hitDice: response.hit_dice,
         hitPoints: response.hit_points,
+        appearanceDescription: response.appearance_description,
       });
       panelCollapsed.value = true;
     } catch (error) {
@@ -289,9 +279,9 @@ const getDocument = async () => {
   }
 }
 
-onMounted(async () => {
-  loading.value = true;
+onMounted(async () => {;
   await getDocument();
+  panelCollapsed.value = route.params.id !== 'new';
   loading.value = false;
 });
 </script>

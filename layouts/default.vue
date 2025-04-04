@@ -1,13 +1,6 @@
 <script setup lang="ts">
 import { Analytics } from '@vercel/analytics/nuxt'
 import { SpeedInsights } from "@vercel/speed-insights/nuxt"
-import { Client } from 'appwrite';
-import { Account, Users } from 'node-appwrite';
-
-const client = new Client();
-const users = new Users(client.value);
-const token = await users.createToken();
-const secret = token.secret;
 </script>
 
 <template>

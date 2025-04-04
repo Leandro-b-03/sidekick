@@ -26,15 +26,39 @@ interface TurnState {
 }
 
 // Represents a combatant (monster or player)
-export interface Combatant {
-  id: string; // Unique ID for keying in lists
+export interface CombatantDocument {
+  id: bigint | null; // ID of the combatant
+  combat_id: bigint; // ID of the combat this combatant belongs to
   name: string;
   initiative: number;
-  maxHp: number; // Store max HP
-  currentHp: number; // Store current HP separately
+  max_hp: number; // Store max HP
+  current_hp: number; // Store current HP separately
   status: typeof COMBATANT_STATUS[keyof typeof COMBATANT_STATUS]; // Use status constants
   type: 'monster' | 'player';
-  turnHistory: TurnState[]; // Renamed for clarity, tracks HP etc. over turns
-  docId?: string; // Optional: Store combat ID if needed
-  monsterData?: MonsterInfo; // Optional: Store original monster data if needed
+  turn_history: TurnState[]; // Renamed for clarity, tracks HP etc. over turns
+  combatant_id: string; // Unique ID for the combatant
+}
+
+// Represents a combat document in the database
+export interface CombatDocument {
+  id: bigint | null; // ID of the combat
+  monsters: number | null; // Number of monsters in the combat
+  players: number | null; // Number of players in the combat
+  turns: number | null; // Number of turns in the combat
+  status: 'ongoing' | 'completed' | 'abandoned' | null; // Combat status
+  won: 'monsters' | 'players' | 'draw' | 'none' | null; // Outcome of the combat
+}
+
+// Represents a combatant's local state in the UI
+export interface CombatantLocalState extends Omit<CombatantDocument, 'max_hp' | 'current_hp' | 'turn_history' | 'combat_id' | 'combatant_id'> {
+  // Fields matching Combatant but potentially different types/names locally
+  maxHp: number; // Use number locally for easier manipulation
+  currentHp: number; // Use number locally for easier manipulation
+  turnHistory: TurnState[]; // Use array of TurnState objects locally
+  combatId: bigint; // Use bigint locally for easier manipulation
+  combatantId: string; // Use string locally for easier manipulation
+  // Local UI state fields
+  show: boolean; // For toggling visibility in UI
+  createdAt: Date; // Timestamp when the combat was created
+  updatedAt: Date | null; // Timestamp when the combat was last updated
 }

@@ -113,6 +113,7 @@
     "status": "Status",
     "turn": "Turno",
     "turns": "Turnos",
+    "none": "Nenhum",
     "monsters": "Monstros",
     "players": "Jogadores",
     "created": "Criado em",
@@ -190,7 +191,10 @@
       "no-combatants": "Nenhum combatente encontrado",
       "no-combatants-detail": "Adicione um jogador ou inimigo para iniciar o combate"
     },
-    "summary": "Resumo do Combate"
+    "summary": "Resumo do Combate",
+    "ongoing": "Em andamento",
+    "completed": "Concluído",
+    "abandoned": "Abandonado"
   },
   "age": {
     "title": "Idade",

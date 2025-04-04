@@ -14,6 +14,7 @@ export default defineNuxtConfig({
   },
   modules: [
     'nuxt-appwrite',
+    '@nuxtjs/supabase',
     '@primevue/nuxt-module',
     '@nuxtjs/i18n',
     '@morev/vue-transitions/nuxt',
@@ -27,7 +28,15 @@ export default defineNuxtConfig({
   },
   appwrite: {
     endpoint: process.env.APPWRITE_URL,
-    project: process.env.APPWRITE_PROJECT,
+    project: process.env.APPWRITE_PROJECT
+  },
+  supabase: {
+    redirectOptions: {
+      login: '/',
+      callback: '/confirm',
+      exclude: ['*'],
+      saveRedirectToCookie: false,
+    },
   },
   i18n: {
     locales: [
@@ -67,7 +76,8 @@ export default defineNuxtConfig({
       npcCollectionID: process.env.NPCS,
       itemsCollectionID: process.env.ITEMS,
       combatsCollectionID: process.env.COMBATS,
-      initiativeCollectionID: process.env.INITIATIVE
+      initiativeCollectionID: process.env.INITIATIVE,
+      USER_ID: process.env.USER_ID
     },
     deepseekUrl: process.env.DEEPSEEK_URL,
     deepseekKey: process.env.DEEPSEEK_API_KEY,
