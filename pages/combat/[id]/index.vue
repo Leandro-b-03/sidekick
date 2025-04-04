@@ -200,26 +200,28 @@ const onCellEditComplete = (event: any) => {
 const getDocument = async () => {
   const id = route.params.id;
   if (id !== 'new') {
-    combatants.show = true;
     try {
       const { data, error } = await supabase
-        .from('combats')
+        .from('initiatives')
         .select('*')
-        .eq('slug', id)
-        .single();
+        .eq('combat_id', id);
 
       if (error) {
         throw error;
       }
 
-      const response = data as CombatantDocument;
-      const { current_hp, max_hp, turn_history, ...filteredCombat } = response;
+      const response = data as CombatantDocument[];
       
-      Object.assign(combatants, {
-        ...filteredCombat,
-        currentHp: response.current_hp,
-        maxHp: response.max_hp,
-        turnHistory: response.turn_history
+      response.map(combatant => {
+        const { current_hp, max_hp, turn_history, ...filteredCombat } = combatant;
+        combatants.value.push({
+          ...filteredCombat,
+          currentHp: current_hp,
+          maxHp: max_hp,
+          turnHistory: turn_history.map(entry => ({
+            hp: entry.hp
+          })),
+        });
       });
     } catch (error) {
       console.error('Error fetching Item:', error);
@@ -253,7 +255,7 @@ const saveCombat = async () => {
     const monsters = combatants.value.map(c => c.type === 'monster' && c.status === COMBATANT_STATUS.ALIVE ? c : null).filter(c => c !== null).length;
     const players = combatants.value.map(c => c.type === 'player' && c.status === COMBATANT_STATUS.ALIVE ? c : null).filter(c => c !== null).length;
     const combatStatus = monsters > 0 && players > 0 ? 'ongoing' : 'completed';
-    const won = monsters > 0 ? 'monsters' : players > 0 ? 'players' : 'none';
+    const won = monsters > 0 && players > 0 ? 'none' : players === 0 ? 'monsters' : 'players';
 
     const combatData: CombatDocument = {
       monsters: combatants.value.map(c => c.type === 'monster' ? c : null).filter(c => c !== null).length,
@@ -271,11 +273,9 @@ const saveCombat = async () => {
       $toast.add({ severity: 'error', summary: t('combat.messages.error-saving'), detail: t('combat.messages.error-saving-detail'), life: 3000 });
       return;
     }
-    console.log('combatData', data);
     if (data) {
       console.log('Combat saved:', data);
       combatId.value = data[0].id;
-      $toast.add({ severity: 'success', summary: t('combat.messages.saved'), detail: t('combat.messages.saved-detail'), life: 3000 });
     }
 
     const combatantsToSave: CombatantDocument[] = combatants.value.map(combatant => ({
@@ -299,18 +299,25 @@ const saveCombat = async () => {
           .select();
         if (combatantError) {
           console.error('Error saving combatants:', combatantError);
-          $toast.add({ severity: 'error', summary: t('combat.messages.error-saving'), detail: t('combat.messages.error-saving-detail'), life: 3000 });
           continue;
         }
         if (combatantData) {
           combatant.id = combatantData[0].id;
-          $toast.add({ severity: 'success', summary: t('combat.messages.saved'), detail: t('combat.messages.saved-detail'), life: 3000 });
         }
       } catch (error) {
         console.error('Error saving combatant:', error);
-        $toast.add({ severity: 'error', summary: t('combat.messages.error-saving'), detail: t('combat.messages.error-saving-detail'), life: 3000 });
       }
     }
+    
+
+    // Clear local storage after saving
+    localStorage.removeItem('combatants');
+    $toast.add({ severity: 'success', summary: t('combat.messages.saved'), detail: t('combat.messages.saved-detail'), life: 3000 });
+
+    router.push({
+      name: `combat-id___${locale.value}`,
+      params: { id: combatId.value },
+    });
   } catch (error) {
     console.error('Error saving combat:', error);
     $toast.add({ severity: 'error', summary: t('combat.messages.error-saving'), detail: t('combat.messages.error-saving-detail'), life: 3000 });

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const { locale } = useNuxtApp().$i18n;
-const { database, ID, Query } = useAppwrite();
+const supabase = useSupabaseClient();
 const route = useRoute();
 const router = useRouter();
 const config = useRuntimeConfig();

@@ -24,11 +24,11 @@ const formattedDate = (createdAt: string) => {
 // Determine Tag severity based on status
 const statusSeverity = (status: string) => {
   switch (status.toLowerCase()) {
-    case 'finished':
+    case 'completed':
       return 'success';
     case 'ongoing':
       return 'info';
-    case 'cancelled':
+    case 'abandoned':
       return 'warning';
     default:
       return 'secondary'; // Default gray tag
@@ -48,34 +48,28 @@ const winnerSeverity = (won :string) => {
       return 'secondary'; // Gray if no winner yet or unknown
   }
 };
-
-const winnerText = (won :string) => {
-    if (!won) return 'N/A';
-    // Capitalize first letter for display
-    return won.charAt(0).toUpperCase() + won.slice(1);
-};
 </script>
 
 <template>
   <div class="flex flex-row flex-wrap gap-2">
     <TransitionFade group appear class="flex flex-row flex-wrap gap-2">
-      <Card v-if="combats?.length > 0" v-for="combat in combats" class="w-[300px] h-[390px] mt-2 shadow-2xl overflow-hidden" :key="combat.$id">
+      <Card v-if="combats?.length > 0" v-for="combat in combats" class="w-[300px] h-[390px] mt-2 shadow-2xl overflow-hidden" :key="combat.id">
         <template #header>
           <div class="header bg-gray-800 p-4 flex flex-row justify-between items-center mb-1">
-            <NuxtLink :to="`combat/${combat.combat_id}`">
+            <NuxtLink :to="`combat/${combat.id}`">
               <Skeleton v-if="loading" width="150px" height="35px" />
               <h2 class="text-2xl text-gray-50 mb-0">{{ $t('combat.summary') }}</h2>
             </NuxtLink>
           </div>
         </template>
         <template #subtitle>
-            {{ `${$t('common.created')}: ${formattedDate(combat.$createdAt)}` }}
+            {{ `${$t('common.created')}: ${formattedDate(combat.created_at)}` }}
         </template>
         <template #content>
             <div class="flex flex-col gap-3">
                 <div class="flex justify-between items-center">
                   <span class="font-medium">{{ $t('common.status') }}:</span>
-                  <Tag :value="combat.status" :severity="statusSeverity(combat.status)" />
+                  <Tag :value="$t(`combat.${combat.status}`)" :severity="statusSeverity(combat.status)" />
                 </div>
                 <Divider layout="horizontal" />
                 <div class="flex justify-between items-center">
@@ -90,10 +84,10 @@ const winnerText = (won :string) => {
                   <span class="font-medium">{{ $t('common.turns') }}:</span>
                   <span class="font-semibold">{{ combat.turns }}</span>
                 </div>
-                <Divider layout="horizontal" v-if="combat.status === 'finished'" />
-                <div class="flex justify-between items-center" v-if="combat.status === 'finished'">
+                <Divider layout="horizontal" />
+                <div class="flex justify-between items-center">
                   <span class="font-medium">{{ $t('common.winner') }}:</span>
-                  <Tag :value="winnerText(combat.won)" :severity="winnerSeverity(combat.won)" />
+                  <Tag :value="$t(`common.${combat.won}`)" :severity="winnerSeverity(combat.won)" />
                 </div>
             </div>
         </template>
