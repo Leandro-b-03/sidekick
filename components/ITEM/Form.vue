@@ -59,7 +59,6 @@ const panel = ref(null);
 
 watch(() => props.panelCollapsed, () => {
   if (props.panelCollapsed === true) {
-    console.log('Panel is collapsed');
     panel.value.toggle();
   }
 });
@@ -175,7 +174,7 @@ const changeType = (type_: Event) => {
             <Message v-if="$form.wondrousItems?.invalid" severity="error" size="small" variant="simple">{{ $form.wondrousItems.error?.message }}</Message>
           </div>
         </div>
-        <Button type="submit" severity="secondary" :label="$t(button)" :disabled="panelCollapsed.value" :loading="loading" />
+        <Button type="submit" severity="secondary" :label="$t(button)" :loading="loading" />
       </Form>
     </Panel>
   </transition-fade>

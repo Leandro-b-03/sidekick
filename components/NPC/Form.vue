@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { SelectOption } from '@/interfaces/common.type';
 
-  
 const route = useRoute();
 
 const props = defineProps({
@@ -69,9 +68,6 @@ const props = defineProps({
     type: Array as PropType<SelectOption[]>,
     default: () => [],
   },
-
-  // Functions & State from Parent - Mark as required
-  // Funções e Estado do Pai - Marcados como obrigatórios
   onFormSubmit: {
     type: Function,
     required: true,
@@ -104,7 +100,6 @@ const panel = ref(null);
 
 watch(() => props.panelCollapsed, () => {
   if (props.panelCollapsed === true) {
-    console.log('Panel is collapsed');
     panel.value.toggle();
   }
 });
@@ -371,7 +366,7 @@ watch(() => props.panelCollapsed, () => {
           <Message v-if="$form.difficulty?.invalid" severity="error" size="small" variant="simple">{{ $form.difficulty.error?.message }}</Message>
         </div>
       </div>
-      <Button type="submit" severity="secondary" :label="$t(button)" :disabled="panelCollapsed" :loading="props.loading" />
+      <Button type="submit" severity="secondary" :label="$t(button)" :loading="loading" />
     </Form>
   </Panel>
 </template>

@@ -8,12 +8,12 @@ const props = defineProps<{
 <template>
   <div class="flex flex-row flex-wrap gap-2">
     <TransitionFade group appear class="flex flex-row flex-wrap gap-2">
-      <Card v-if="items" v-for="item in items" class="w-[355px] h-[500px] mt-2 shadow-2xl overflow-hidden" :key="item.$id">
+      <Card v-if="items?.length > 0" v-for="item in items" class="w-[355px] h-[500px] mt-2 shadow-2xl overflow-hidden" :key="item.$id">
         <template #header>
           <div class="header bg-gray-800 p-4 flex flex-row justify-between items-center mb-1">
             <div>
               <Skeleton v-if="loading" width="150px" height="35px" />
-              <NuxtLink v-else :to="`/generate/item/${item.$id}`">
+              <NuxtLink v-else :to="`/generate/item/${item.slug}`">
                 <h2 class="text-3xl text-gray-50 mb-0" v-tooltip.top="item.name">{{ textEllipsis(item.name, 15) }}</h2>
               </NuxtLink>
               <Skeleton v-if="loading" width="100px" height="15px" class="mt-1" />
@@ -47,9 +47,9 @@ const props = defineProps<{
                     <td class="bg-gray-100 p-1 rounded-tr text-xs">
                       <Skeleton v-if="loading" width="15px" height="15px" />
                       <span v-else>
-                          <span v-if="JSON.parse(item.damage)">
-                            {{ JSON.parse(item.damage)?.base }}
-                            <template v-if="JSON.parse(item.damage)?.versatile">, {{ textEllipsis(JSON.parse(item.damage)?.versatile, 15) }}</template>
+                          <span v-if="item.damage">
+                            {{ item.damage?.base }}
+                            <template v-if="item.damage?.versatile">, {{ textEllipsis(item.damage?.versatile, 15) }}</template>
                           </span>
                           <span v-else>-</span>
                       </span>

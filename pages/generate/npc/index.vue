@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const { locale } = useNuxtApp().$i18n;
-const { database, ID, Query } = useAppwrite();
+const supabase = useSupabaseClient();
 const config = useRuntimeConfig();
 const route = useRoute();
 const router = useRouter();
@@ -135,40 +135,56 @@ const onFormSubmit = async ({ values, valid }) => {
   });
 };
 
+/**
+ * Fetches documents from the Supabase 'npcs' table based on route search parameters,
+ * applying pagination and ordering.
+ *
+ * @param {object} route - The route object (e.g., from Vue Router) containing params or query.
+ */
 const fetchDocuments = async () => {
-  const search_ = route.params.search || route.query.search || '';
-  const search = search_.split(',');
+  const search_ = route.params?.search || route.query?.search || '';
+  const searchFilters = search_.split(',').filter(s => s.trim() !== '');
+
   try {
-    const { documents: npcsData, total: total_ } = await database.listDocuments(
-      config.public.databaseID,
-      config.public.npcCollectionID,
-      [
-        Query.limit(perPage.value),
-        Query.offset(offset.value),
-        Query.orderDesc('$createdAt'),
+    let query = supabase
+      .from('npcs')
+      .select('*', { count: 'exact' });
 
-        ...search.map((item) => {
-          const [key, value] = item.split('=');
+    searchFilters.forEach((item) => {
+      const [key, value] = item.split('=').map(s => s.trim());
 
-          if (!key || value === undefined || key === "" || value === null) {
-            console.warn(`Skipping invalid search term: ${item}`);
-            return Query.isNotNull("name");
-          }
+      if (!key || value === undefined || value === null || value === '') {
+        console.warn(`Skipping invalid search term: "${item}"`);
+        return;
+      }
 
-          if (value === 'false') {
-            return Query.equal(key, [false]);
-          } else if (value === 'true') {
-            return Query.equal(key, [true]);
-          }
+      const filterValue = value.toLowerCase() === 'true' ? true :
+                          value.toLowerCase() === 'false' ? false : value;
 
-          return Query.equal(key, [value]);
-        })
-      ]
-    );
-    npcs.value = npcsData;
-    total.value = total_;
+      query = query.eq(key, filterValue);
+    });
+
+    query = query.order('created_at', { ascending: false });
+
+    const from = offset.value;
+    const to = from + perPage.value - 1;
+    query = query.range(from, to);
+
+    const { data, error, count } = await query;
+
+    if (error) {
+      console.error('Error fetching documents from Supabase:', error);
+      throw error;
+    }
+
+    npcs.value = data || [];
+    total.value = count || 0;
   } catch (error) {
-    console.log(error);
+    console.error('Failed to execute fetchDocuments:', error);
+    npcs.value = [];
+    total.value = 0;
+  } finally {
+    loading.value = false;
   }
 };
 

@@ -59,7 +59,7 @@ const winnerText = (won :string) => {
 <template>
   <div class="flex flex-row flex-wrap gap-2">
     <TransitionFade group appear class="flex flex-row flex-wrap gap-2">
-      <Card v-if="combats" v-for="combat in combats" class="w-[300px] h-[390px] mt-2 shadow-2xl overflow-hidden" :key="combat.$id">
+      <Card v-if="combats?.length > 0" v-for="combat in combats" class="w-[300px] h-[390px] mt-2 shadow-2xl overflow-hidden" :key="combat.$id">
         <template #header>
           <div class="header bg-gray-800 p-4 flex flex-row justify-between items-center mb-1">
             <NuxtLink :to="`combat/${combat.combat_id}`">

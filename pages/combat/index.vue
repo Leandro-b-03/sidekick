@@ -13,37 +13,56 @@ const offset = computed(() => (page.value - 1) * perPage.value);
 const total = ref(0);
 const loading = ref(true);
 
-const fetchDocuments = async () => {
-  const search_ = route.params.search || route.query.search || '';
-  const search = search_.split(',');
-  try {
-    const { documents: combatsData, total: total_ } = await database.listDocuments(
-      config.public.databaseID,
-      config.public.combatsCollectionID,
-      [
-        Query.limit(perPage.value),
-        Query.offset(offset.value),
-        Query.orderDesc('$createdAt'),
-        ...search.map((item) => {
-          const [key, value] = item.split('=');
+ /**
+ * Fetches documents from the Supabase 'combats' table based on route search parameters,
+ * applying pagination and ordering.
+ *
+ * @param {object} route - The route object (e.g., from Vue Router) containing params or query.
+ */
+ const fetchDocuments = async () => {
+  const search_ = route.params?.search || route.query?.search || '';
+  const searchFilters = search_.split(',').filter(s => s.trim() !== '');
 
-          if (!key || value === undefined || key === "" || value === null) {
-            console.warn(`Skipping invalid search term: ${item}`);
-            return Query.isNotNull("combat_id");
-          }
-          if (value === 'false') {
-            return Query.equal(key, [false]);
-          } else if (value === 'true') {
-            return Query.equal(key, [true]);
-          }
-          return Query.equal(key, [value]);
-        })
-      ]
-    );
-    combats.value = combatsData;
-    total.value = total_;
+  try {
+    let query = supabase
+      .from('combats')
+      .select('*', { count: 'exact' });
+
+    searchFilters.forEach((item) => {
+      const [key, value] = item.split('=').map(s => s.trim());
+
+      if (!key || value === undefined || value === null || value === '') {
+        console.warn(`Skipping invalid search term: "${item}"`);
+        return;
+      }
+
+      const filterValue = value.toLowerCase() === 'true' ? true :
+                          value.toLowerCase() === 'false' ? false : value;
+
+      query = query.eq(key, filterValue);
+    });
+
+    query = query.order('created_at', { ascending: false });
+
+    const from = offset.value;
+    const to = from + perPage.value - 1;
+    query = query.range(from, to);
+
+    const { data, error, count } = await query;
+
+    if (error) {
+      console.error('Error fetching documents from Supabase:', error);
+      throw error;
+    }
+
+    combats.value = data || [];
+    total.value = count || 0;
   } catch (error) {
-    console.log(error);
+    console.error('Failed to execute fetchDocuments:', error);
+    combats.value = [];
+    total.value = 0;
+  } finally {
+    loading.value = false;
   }
 };
 

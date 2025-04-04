@@ -20,30 +20,7 @@ export interface DamageInfo {
 
 // Structure matching my code
 export interface MagicItemDocument {
-  name: string;
-  class: string | null;
-  description: string;
-  weaponType: string | null;
-  requirements: string;
-  type: string;
-  wondrousItem: string | null;
-  rarity: string;
-  evolutionLevel: string[]; // JSON string of EvolutionStage[]
-  notes: string[];
-  evolutionNotes: string[];
-  damage: string[]; // JSON string of DamageInfo
-  itemTier: string | null;
-  damageType: string | null;
-  $id: string | null,
-  $createdAt: string | null,
-  $updatedAt: string | null,
-  $permissions: [] | null,
-  $databaseId: string | null,
-  $collectionId: string | null,
-}
-
-// Structure matching Appwrite Document (used for saving)
-export interface MagicItemDocumentSave {
+  slug: string;
   name: string;
   class: string | null;
   description: string;
@@ -52,25 +29,22 @@ export interface MagicItemDocumentSave {
   type: string;
   wondrous_item: string | null;
   rarity: string;
-  evolution_level: string[]; // JSON string of EvolutionStage[]
+  evolution_level: EvolutionStage | []; // JSON string of EvolutionStage[]
   notes: string[];
   evolution_notes: string[];
-  damage: string[]; // JSON string of DamageInfo
+  damage: DamageInfo | []; // JSON string of DamageInfo
   item_tier: string | null;
   damage_type: string | null;
-  $id: string | null,
-  $createdAt: string | null,
-  $updatedAt: string | null,
-  $permissions: [] | null,
-  $databaseId: string | null,
-  $collectionId: string | null,
 }
 
 // Structure for LOCAL component state (more convenient to work with)
-// Extends the document type but overrides fields that are handled differently locally
-export interface MagicItemLocalState extends Omit<MagicItemDocument, 'evolution_level' | 'damage'> {
-  evolution_level: EvolutionStage[]; // Use array of objects locally
-  damage: DamageInfo;              // Use object locally
+export interface MagicItemLocalState extends Omit<MagicItemDocument, 'evolution_level' | 'wondrous_item' | 'item_tier' | 'weapon_type' | 'evolution_notes' | 'damage_type'> {
+  evolutionLevel: EvolutionStage[]; // Use array of objects locally
+  wondrousItem: string; // Use string locally for easier manipulation
+  itemTier: string; // Use string locally for easier manipulation
+  weaponType: string; // Use string locally for easier manipulation
+  evolutionNotes: string[]; // Use array of strings locally
+  damageType: string; // Use string locally for easier manipulation
 
   // Local UI state
   show: boolean;

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { COMBATANT_STATUS } from '~/interfaces/combat.type';
-import type { Combatant } from '~/interfaces/combat.type';
+import { COMBATANT_STATUS } from '@/interfaces/combat.type';
+import type { CombatantDocument, CombatDocument, CombatantLocalState } from '@/interfaces/combat.type';
 
 const route = useRoute();
 const router = useRouter();
@@ -8,16 +8,14 @@ const t = useNuxtApp().$i18n.t;
 const { $toast } = useNuxtApp();
 const config = useRuntimeConfig();
 const { locale } = useNuxtApp().$i18n;
-const { database, Query, ID } = useAppwrite();
+const supabase = useSupabaseClient();
 
 const MAX_INITIATIVE = 20;
 const DEFAULT_HP = 50;
 const loading = ref(false);
 const panelColapsed = ref(false);
 const combatId = ref(route.params.id);
-const combatants = ref<Combatant[]>([]);
-
-console.log('Combat ID:', combatId.value);
+const combatants = ref<CombatantDocument[]>([]);
 
 if (import.meta.client) {
   const storedCombatants = localStorage.getItem('combatants');
@@ -54,11 +52,11 @@ const saveLocalStorage = () => {
 
 const generateUniqueId = (): string => `combatant_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
 
-const addCombatant = (combatantData: Omit<Combatant, 'id' | 'turnHistory' | 'currentHp'>) => {
+const addCombatant = (combatantData: CombatantLocalState) => {
   const initialHp = combatantData.maxHp;
-  const newCombatant: Combatant = {
+  const newCombatant: CombatantLocalState = {
     ...combatantData,
-    id: generateUniqueId(),
+    combatantId: generateUniqueId(),
     currentHp: initialHp,
     // turnHistory: [{ hp: initialHp }],    
     turnHistory: combatants.value[0]
@@ -79,7 +77,7 @@ const sortCombatants = () => {
   combatants.value.sort((a, b) => b.initiative - a.initiative);
 };
 
-const removeCombatant = (combatant: Combatant) => {
+const removeCombatant = (combatant: CombatantDocument) => {
   combatants.value = combatants.value.filter(c => c.id !== combatant.id);
   saveLocalStorage();
 };
@@ -199,37 +197,36 @@ const onCellEditComplete = (event: any) => {
   loading.value = false;
 };
 
-const getCombat = async () => {
-  console.log('Fetching combat for ID:', combatId.value);
-  try {
-    loading.value = true;
-    const response = await database.listDocuments(
-      config.public.databaseID,
-      config.public.initiativeCollectionID,
-      [Query.equal('combat_id', combatId.value)]
-    );
+const getDocument = async () => {
+  const id = route.params.id;
+  if (id !== 'new') {
+    combatants.show = true;
+    try {
+      const { data, error } = await supabase
+        .from('combats')
+        .select('*')
+        .eq('slug', id)
+        .single();
 
-    if (response.documents.length > 0) {
-      combatants.value = response.documents.map((doc: any) => ({
-        id: doc.id,
-        currentHp: doc.current_hp,
-        initiative: doc.initiative,
-        maxHp: doc.max_hp,
-        name: doc.name,
-        status: doc.status,
-        turnHistory: JSON.parse(doc.turn_history[0]),
-        type: doc.type,
-        docId: doc.$id,
-      }));
+      if (error) {
+        throw error;
+      }
 
-      sortCombatants();
-    } else {
-      console.warn('No combat found for the given ID');
+      const response = data as CombatantDocument;
+      const { current_hp, max_hp, turn_history, ...filteredCombat } = response;
+      
+      Object.assign(combatants, {
+        ...filteredCombat,
+        currentHp: response.current_hp,
+        maxHp: response.max_hp,
+        turnHistory: response.turn_history
+      });
+    } catch (error) {
+      console.error('Error fetching Item:', error);
+    } finally {
     }
-  } catch (error) {
-    console.error('Error fetching combat:', error);
-  } finally {
-    loading.value = false;
+  } else {
+    panelCollapsed.value = false;
   }
 };
 
@@ -245,81 +242,75 @@ const resetCombat = async () => {
 };
 
 const saveCombat = async () => {
+  if (combatants.value.length === 0) {
+    $toast.add({ severity: 'warn', summary: t('combat.messages.no-combatants'), detail: t('combat.messages.no-combatants-detail'), life: 3000 });
+    return;
+  }
+
   try {
     loading.value = true;
 
-    let combatId_ = ID.unique();
+    const monsters = combatants.value.map(c => c.type === 'monster' && c.status === COMBATANT_STATUS.ALIVE ? c : null).filter(c => c !== null).length;
+    const players = combatants.value.map(c => c.type === 'player' && c.status === COMBATANT_STATUS.ALIVE ? c : null).filter(c => c !== null).length;
+    const combatStatus = monsters > 0 && players > 0 ? 'ongoing' : 'completed';
+    const won = monsters > 0 ? 'monsters' : players > 0 ? 'players' : 'none';
 
-    if (combatId.value === 'new') {
-      combatants.value.map(async combatant => {
-        await database.createDocument(
-          config.public.databaseID,
-          config.public.initiativeCollectionID,
-          ID.unique(),
-          {
-            current_hp: parseInt(combatant.currentHp),
-            id: combatant.id,
-            initiative: combatant.initiative,
-            max_hp: combatant.maxHp,
-            name: combatant.name,
-            status: combatant.status,
-            turn_history: [JSON.stringify(combatant.turnHistory)],
-            type: combatant.type,
-            combat_id: combatId_,
-          }
-        );
-      });
-
-      // Clear local storage after saving
-      localStorage.removeItem('combatants');
-      $toast.add({ severity: 'success', summary: t('combat.messages.saved'), detail: t('combat.messages.saved-detail'), life: 3000 });
-
-      router.push({
-        name: `combat-id___${locale.value}`,
-        params: { id: combatId_ },
-      });
-    } else {
-      combatants.value.map(async combatant => {
-        await database.updateDocument(
-          config.public.databaseID,
-          config.public.initiativeCollectionID,
-          combatant.docId,
-          {
-            current_hp: parseInt(combatant.currentHp),
-            initiative: combatant.initiative,
-            max_hp: combatant.maxHp,
-            name: combatant.name,
-            status: combatant.status,
-            turn_history: [JSON.stringify(combatant.turnHistory)],
-            type: combatant.type,
-          }
-        );
-      });
-
-      // Clear local storage after saving
+    const combatData: CombatDocument = {
+      monsters: combatants.value.map(c => c.type === 'monster' ? c : null).filter(c => c !== null).length,
+      players: combatants.value.map(c => c.type === 'player' ? c : null).filter(c => c !== null).length,
+      turns: combatants.value[0].turnHistory.length,
+      status: combatStatus,
+      won: won,
+    };
+    const { data, error } = await supabase
+      .from('combats')
+      .upsert(combatData, { onConflict: ['id'] })
+      .select();
+    if (error) {
+      console.error('Error saving combat:', error);
+      $toast.add({ severity: 'error', summary: t('combat.messages.error-saving'), detail: t('combat.messages.error-saving-detail'), life: 3000 });
+      return;
+    }
+    console.log('combatData', data);
+    if (data) {
+      console.log('Combat saved:', data);
+      combatId.value = data[0].id;
       $toast.add({ severity: 'success', summary: t('combat.messages.saved'), detail: t('combat.messages.saved-detail'), life: 3000 });
     }
 
-    const monsters = combatants.value.map(c => c.type === 'monster' && c.status === COMBATANT_STATUS.ALIVE ? c : null).filter(c => c !== null).length;
-    const players = combatants.value.map(c => c.type === 'player' && c.status === COMBATANT_STATUS.ALIVE ? c : null).filter(c => c !== null).length;
-    const combatStatus = monsters > 0 && players > 0 ? 'in_progress' : 'finished';
-    const won = monsters > 0 ? 'monsters' : players > 0 ? 'players' : 'none';
+    const combatantsToSave: CombatantDocument[] = combatants.value.map(combatant => ({
+      id: combatant.id,
+      combat_id: combatId.value,
+      name: combatant.name,
+      initiative: combatant.initiative,
+      max_hp: combatant.maxHp,
+      current_hp: combatant.currentHp,
+      status: combatant.status,
+      type: combatant.type,
+      turn_history: combatant.turnHistory,
+      combatant_id: combatant.combatantId
+    }));
 
-    const response = await database.createDocument(
-      config.public.databaseID,
-      config.public.combatsCollectionID,
-      ID.unique(),
-      {
-        combat_id: combatId_,
-        monsters: combatants.value.map(c => c.type === 'monster' ? c : null).filter(c => c !== null).length,
-        players: combatants.value.map(c => c.type === 'player' ? c : null).filter(c => c !== null).length,
-        turns: combatants.value[0].turnHistory.length,
-        status: combatStatus,
-        won: won,
+    for (const combatant of combatantsToSave) {
+      try {
+        const { data: combatantData, error: combatantError } = await supabase
+          .from('initiatives')
+          .upsert(combatant, { onConflict: ['id'] })
+          .select();
+        if (combatantError) {
+          console.error('Error saving combatants:', combatantError);
+          $toast.add({ severity: 'error', summary: t('combat.messages.error-saving'), detail: t('combat.messages.error-saving-detail'), life: 3000 });
+          continue;
+        }
+        if (combatantData) {
+          combatant.id = combatantData[0].id;
+          $toast.add({ severity: 'success', summary: t('combat.messages.saved'), detail: t('combat.messages.saved-detail'), life: 3000 });
+        }
+      } catch (error) {
+        console.error('Error saving combatant:', error);
+        $toast.add({ severity: 'error', summary: t('combat.messages.error-saving'), detail: t('combat.messages.error-saving-detail'), life: 3000 });
       }
-    );
-
-    console.log('Combat saved:', response);
+    }
   } catch (error) {
     console.error('Error saving combat:', error);
     $toast.add({ severity: 'error', summary: t('combat.messages.error-saving'), detail: t('combat.messages.error-saving-detail'), life: 3000 });
@@ -336,7 +327,7 @@ onMounted(async () => {
   }
 
   if (route.params.id !== 'new') {
-    await getCombat();
+    await getDocument();
   }
 });
 </script>

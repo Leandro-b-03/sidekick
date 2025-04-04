@@ -14,12 +14,12 @@ const props = defineProps({
 <template>
   <div class="flex flex-row flex-wrap gap-2">
     <TransitionFade group appear class="flex flex-row flex-wrap gap-2">
-      <Card v-if="npcs" v-for="npc in npcs" class="w-[355px] h-[500px] mt-2 shadow-2xl overflow-hidden" :key="npc.$id">
+      <Card v-if="npcs?.length > 0" v-for="npc in npcs" class="w-[355px] h-[500px] mt-2 shadow-2xl overflow-hidden" :key="npc.$id">
         <template #header>
           <div class="header bg-gray-800 p-4 flex flex-row justify-between items-center mb-1">
             <div>
               <Skeleton v-if="loading" width="150px" height="35px" />
-              <NuxtLink v-else :to="`/generate/npc/${npc.$id}`">
+              <NuxtLink v-else :to="`/generate/npc/${npc.slug}`">
                 <h2 class="text-3xl text-gray-50 mb-0" v-tooltip.top="npc.name">{{ textEllipsis(npc.name, 15) }}</h2>
               </NuxtLink>
               <Skeleton v-if="loading" width="100px" height="15px" class="mt-1" />
@@ -47,7 +47,7 @@ const props = defineProps({
             </div>
             <div class="absolute bottom-6 w-full">
               <div class="attrs flex flex-row flex-wrap gap-1 mb-2 w-full">
-                <div v-for="attr in JSON.parse(npc.attr[0])" class="flex items-center justify-center flex-col bg-gray-100 rounded px-2 py-1 w-[75px]">
+                <div v-for="attr in npc.attr" class="flex items-center justify-center flex-col bg-gray-100 rounded px-2 py-1 w-[75px]">
                   <div><h2 class="text-sm font-semibold">{{ attr.short }}</h2></div>
                   <div>
                     <div class="flex flex-row items-center justify-center gap-1">

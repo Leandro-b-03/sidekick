@@ -1,25 +1,25 @@
 <script setup lang="ts">
 import defaultImage from '@/assets/images/items/default.webp';
-import type { MagicItemLocalState, MagicItemDocument, MagicItemDocumentSave } from '@/interfaces/item.type';
+import type { MagicItemLocalState, MagicItemDocument } from '@/interfaces/item.type';
 import type { SelectOption } from '@/interfaces/common.type';
 
 const { locale } = useNuxtApp().$i18n;
-const { database, ID } = useAppwrite();
+const supabase = useSupabaseClient();
 const config = useRuntimeConfig();
 const router = useRouter();
 const route = useRoute();
 
-const panelCollapsed = ref(false);
-const loading = ref(false);
+const panelCollapsed = ref(true);
+const loading = ref(true);
 const item = reactive<MagicItemLocalState>({
   show: false,
   name: '',
   class: null,
   description: '',
-  weaponType: null,
+  weaponType: '',
   requirements: '',
   type: '',
-  wondrousItem: null,
+  wondrousItem: '',
   rarity: '',
   evolutionLevel: [
     {
@@ -64,14 +64,8 @@ const item = reactive<MagicItemLocalState>({
     base: '',
     versatile: ''
   },
-  itemTier: null,
-  damageType: null,
-  $id: '',
-  $createdAt: '',
-  $updatedAt: '',
-  $permissions: [],
-  $databaseId: '',
-  $collectionId: '',
+  itemTier: '',
+  damageType: '',
   image: defaultImage,
 });
 
@@ -157,44 +151,40 @@ const onFormSubmit = async ({ values, valid }: { values: any, valid: boolean }) 
 
     const generatedItemData = await $fetch('/api/core', { method: 'POST', body: formData });
 
-    const dataToSave: MagicItemDocumentSave = {
+    const dataToSave: MagicItemDocument = {
+      slug: generateSlug(generatedItemData.name),
       name: generatedItemData.name,
       class: generatedItemData.class, // Use consistent names
       description: generatedItemData.description,
       type: generatedItemData.type,
-      damage: [JSON.stringify(generatedItemData.damage)], // Stringify object
+      damage: generatedItemData.damage, // Stringify object
       damage_type: generatedItemData.damage_type,
       requirements: generatedItemData.requirements,
       wondrous_item: generatedItemData.wondrous_item, // Use consistent names
       rarity: generatedItemData.rarity,
       item_tier: generatedItemData.item_tier,
       weapon_type: generatedItemData.weapon_type, // Use consistent names
-      evolution_level: [JSON.stringify(generatedItemData.evolution_levels)], // Stringify array of objects
+      evolution_level: generatedItemData.evolution_levels, // Stringify array of objects
       notes: generatedItemData.notes,
       evolution_notes: generatedItemData.evolution_notes, // Use consistent names
     };
 
-    const response = await database.createDocument(
-      config.public.databaseID,
-      config.public.itemsCollectionID,
-      ID.unique(),
-      dataToSave
-    );
+    const response = await save(dataToSave, 'items', supabase);
 
      Object.assign(item, {
         ...dataToSave,
-        $id: response.$id,
-        $createdAt: response.$createdAt,
-        $updatedAt: response.$updatedAt,
-        evolutionLevel: generatedItemData.evolution_levels,
-        damageType: generatedItemData.damage_type,
-        damage: generatedItemData.damage,
+        evolutionLevel: response.evolution_level,
+        wondrousItem: response.wondrous_item,
+        itemTier: response.item_tier,
+        weaponType: response.weapon_type,
+        evolutionNotes: response.evolution_notes,
+        damageType: response.damage_type,
         image: defaultImage,
      });
 
     router.push({
       name: `generate-item-id___${locale.value}`,
-      params: { id: response.$id },
+      params: { id: dataToSave.slug },
     });
 
   } catch (error) {
@@ -206,40 +196,44 @@ const onFormSubmit = async ({ values, valid }: { values: any, valid: boolean }) 
 
 const getDocument = async () => {
   const id = route.params.id;
-  if (id && id !== 'new') {
+  if (id !== 'new') {
     item.show = true;
-    loading.value = true;
-    panelCollapsed.value = true;
     try {
-      const doc = await database.getDocument(
-        config.public.databaseID,
-        config.public.itemsCollectionID,
-        id
-      ) as unknown as MagicItemDocument; 
+      const { data, error } = await supabase
+        .from('items')
+        .select('*')
+        .eq('slug', id)
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      const response = data as MagicItemDocument;
+      const { evolution_level, wondrous_item, item_tier, weapon_type, evolution_notes, damage_type, ...filteredItem } = response;
       
       Object.assign(item, {
-        ...doc, 
-        show: true, 
-        damage: JSON.parse(doc.damage[0] || '{}'), 
-        evolutionLevel: JSON.parse(doc.evolution_level[0] || '[]'), 
-        wondrousItem: doc.wondrous_item,
-        weaponType: doc.weapon_type,
-        evolutionNotes: doc.evolution_notes,
-        image: defaultImage, 
+        ...filteredItem,
+        evolutionLevel: response.evolution_level,
+        wondrousItem: response.wondrous_item,
+        itemTier: response.item_tier,
+        weaponType: response.weapon_type,
+        evolutionNotes: response.evolution_notes,
+        damageType: response.damage_type
       });
+      panelCollapsed.value = true;
     } catch (error) {
       console.error('Error fetching Item:', error);
-      // router.push('/error'); 
     } finally {
     }
   } else {
-     panelCollapsed.value = false;
+    panelCollapsed.value = false;
   }
 }
 
 onMounted(async () => {
-  loading.value = true
   await getDocument();
+  panelCollapsed.value = true;
   loading.value = false;
 });
 </script>
