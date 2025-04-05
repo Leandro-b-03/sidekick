@@ -296,8 +296,18 @@ const saveCombat = async () => {
       combatId.value = data[0].id;
     }
 
+    const { error: deleteError } = await supabase
+      .from('initiatives')
+      .delete()
+      .eq('combat_id', combatId.value);
+
+    if (deleteError) {
+      console.error('Error deleting combatants:', deleteError);
+      $toast.add({ severity: 'error', summary: t('combat.messages.error-deleting'), detail: t('combat.messages.error-deleting-detail'), life: 3000 });
+      return;
+    }
+
     const combatantsToSave: CombatantDocument[] = combatants.value.map(combatant => ({
-      id: combatant.id,
       combat_id: combatId.value,
       name: combatant.name,
       initiative: combatant.initiative,
@@ -321,6 +331,7 @@ const saveCombat = async () => {
         }
         if (combatantData) {
           combatant.id = combatantData[0].id;
+          console.log('combatant', combatant);
         }
       } catch (error) {
         console.error('Error saving combatant:', error);

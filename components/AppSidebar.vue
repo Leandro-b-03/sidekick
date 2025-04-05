@@ -98,16 +98,6 @@ function handleShortcut(event: KeyboardEvent) {
   if (shortcutMap[pressedKeys]) {
     event.preventDefault();
     event.stopPropagation();
-    // Check if the pressed key is a valid shortcut
-    // and navigate to the corresponding route
-    // You can also use the command property of the item
-    // to navigate if you want to keep the command logic
-    // in the items array
-    // Example: items.value.find(item => item.shortcut === pressedKeys)?.command();
-    // or
-    // Example: items.value.find(item => item.key === shortcutMap[pressedKeys])?.command();
-    // or
-    // Example: items.value.find(item => item.key === shortcutMap[pressedKeys])?.command();
     router.push(shortcutMap[pressedKeys]);
   }
 }
@@ -130,7 +120,7 @@ onBeforeUnmount(() => {
             <span :class="[item.icon, 'text-primary group-hover:text-inherit']" />
             <span :class="['ml-2', { 'font-semibold': item.items }]">{{ $t(item.label) }}</span>
           </div>
-          <span v-if="item.shortcut" class="ml-1 border border-gray-200 rounded bg-gray-100 text-muted-color text-[8px] p-1">{{ item.shortcut }}</span>
+          <span v-if="item.shortcut" class="ml-1 border border-gray-200 rounded bg-gray-100 dark:bg-gray-600 text-muted-color text-[8px] p-1">{{ item.shortcut }}</span>
         </NuxtLink>
       </template>
       

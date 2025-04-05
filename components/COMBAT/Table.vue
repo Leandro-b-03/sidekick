@@ -143,7 +143,7 @@ const openDialog = (data: any) => {
         </template>
       </Column>
     </DataTable>
-    <div class="flex flex-row justify-between items-center my-4 mx-2">
+    <div class="bg-white dark:bg-gray-900 flex flex-row justify-between items-center my-4 mx-2">
       <Button icon="pi pi-save" :label="$t('combat.save_combat')" severity="primary" @click="saveCombat" />
       <Button icon="pi pi-refresh" :label="$t('combat.reset_combat')" severity="danger" @click="resetCombat" />
     </div>

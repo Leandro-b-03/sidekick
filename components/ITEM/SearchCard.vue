@@ -25,26 +25,26 @@ const props = defineProps<{
           <div class="h-[400px] relative">
             <div class="mb-1 w-full flex flex-row justify-start">
               <Skeleton v-if="loading" width="100px" height="15px" class="mb-1" />
-              <h2 v-else class="text-gray-950 mr-2 text-lg">{{ $t(`type.${item.type}`) }}</h2>
+              <h2 v-else class="text-gray-950 dark:text-gray-100 mr-2 text-lg">{{ $t(`type.${item.type}`) }}</h2>
               <Skeleton v-if="loading" width="100px" height="15px" />
-              <h2 v-else class="text-gray-950 text-lg">{{ $t(`classes.${item.class}`) }}</h2>
+              <h2 v-else class="text-gray-950 dark:text-gray-100 text-lg">{{ $t(`classes.${item.class}`) }}</h2>
             </div>
             <div class="mb-4">
               <Skeleton v-if="loading" width="100px" height="15px" class="mb-1" />
               <h4 v-else class="!text-[12px]">{{ item.weapon_type ? $t(`weapons.${item.weapon_type}`) : item.wondrous_item ? $t(`wondrous_items.${item.wondrous_item}`) : '-' }}</h4>
             </div>
             <div>
-              <div class="mb-4 text-justify bg-gray-100 p-1 rounded border border-gray-200">
+              <div class="mb-4 text-justify bg-gray-100 dark:bg-gray-700 p-1 rounded border border-gray-200 dark:border-gray-600">
                 <Skeleton v-if="loading" width="100%" height="60px" />
-                <p v-else class="text-gray-700 text-sm">{{ textEllipsis(item.description, 300) }}</p>
+                <p v-else class="text-gray-700 dark:text-gray-100 text-sm">{{ textEllipsis(item.description, 300) }}</p>
               </div>
             </div>
             <div class="absolute bottom-6 w-full">
               <table class="table-auto w-full border-separate mb-2">
                 <tbody>
                   <tr class="border-b border-gray-300">
-                    <td class="bg-gray-200 p-1 rounded-tl w-[40%] text-right font-semibold text-xs">{{ $t('common.damage') }}</td>
-                    <td class="bg-gray-100 p-1 rounded-tr text-xs">
+                    <td class="bg-gray-200 dark:bg-gray-700 p-1 rounded-tl w-[40%] text-right font-semibold text-xs">{{ $t('common.damage') }}</td>
+                    <td class="bg-gray-100 dark:bg-gray-600 p-1 rounded-tr text-xs">
                       <Skeleton v-if="loading" width="15px" height="15px" />
                       <span v-else>
                           <span v-if="item.damage">
@@ -56,8 +56,8 @@ const props = defineProps<{
                     </td>
                   </tr>
                   <tr class="">
-                    <td class="bg-gray-200 p-1 rounded-bl text-right font-semibold text-xs">{{ $t('common.requirements') }}</td>
-                    <td class="bg-gray-100 p-1 rounded-br">
+                    <td class="bg-gray-200 dark:bg-gray-700 p-1 rounded-bl text-right font-semibold text-xs">{{ $t('common.requirements') }}</td>
+                    <td class="bg-gray-100 dark:bg-gray-600 p-1 rounded-br">
                       <Skeleton v-if="loading" width="80px" height="15px" />
                       <span v-else class="text-xs text-justify">{{ textEllipsis(item.requirements, 45) }}</span>
                     </td>

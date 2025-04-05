@@ -91,7 +91,7 @@ const onThemeToggler = (): void => {
   <div class="fixed top-0 left-0 right-0 z-10 bg-surface shadow-md hidden lg:block">
     <Menubar :model="items" class="!rounded-none">
       <template #start>
-        <img src="@/assets/images/logo.svg" alt="GM" class="h-10" />
+        <img src="@/assets/images/logo.svg" :alt="$t('sidekick')" class="h-10" />
       </template>
       <template #item="{ item, props, hasSubmenu, root }">
         <a v-ripple class="flex items-center" v-bind="props.action">
@@ -102,6 +102,9 @@ const onThemeToggler = (): void => {
         </a>
       </template>
       <template #end>
+        <div class="flex items-center h-full">
+          <Button :icon="`pi ${button.iconClass}`" severity="secondary" @click="onThemeToggler" />
+        </div>
       </template>
     </Menubar>
   </div>
@@ -120,7 +123,9 @@ const onThemeToggler = (): void => {
         </a>
       </template>
       <template #end>
-        <Button :icon="button.iconClass" @click="onThemeToggler" />
+        <div class="flex items-center h-full w-full">
+          <Button :icon="`pi ${button.iconClass}`" severity="secondary" @click="onThemeToggler" />
+        </div>
       </template>
     </Menubar>
   </div>

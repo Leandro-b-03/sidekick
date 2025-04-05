@@ -1,5 +1,6 @@
 {
   "app": "APP",
+  "sidekick": "Sidekick",
   "card": {
     "footer_left": "Gerado por Mestre APP",
     "footer_right": "©"

@@ -69,8 +69,8 @@ const generatePDF = () => {
           <div class="absolute left-2 top-2 w-full">
             <Button label="gerar PDF" @click="generatePDF" />
           </div>
-          <div class="flex justify-center items-center inset-shadow-sm w-full h-auto rounded inset-shadow-gray-500 striped-bg">
-            <div class="grid grid-cols-1 w-full lg:w-[900px] h-auto bg-white shadow rounded overflow-hidden content-between" id="card-pdf" ref="pdfSection">
+          <div class="flex justify-center items-center inset-shadow-sm w-full h-auto rounded inset-shadow-gray-500 dark:inset-shadow-gray-900 striped-bg">
+            <div class="grid grid-cols-1 w-full lg:w-[900px] h-auto bg-white dark:bg-gray-900 shadow rounded overflow-hidden content-between" id="card-pdf" ref="pdfSection">
               <div class="header bg-gray-800 p-4 flex flex-row justify-between items-center mb-1">
                 <div>
                   <Skeleton v-if="loading" width="150px" height="35px" />
@@ -90,7 +90,7 @@ const generatePDF = () => {
               <div class="body px-2">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-2">
                   <div>
-                    <div class="relative w-full h-auto mb-2 bg-gray-100 rounded overflow-hidden"
+                    <div class="relative w-full h-auto mb-2 bg-gray-100 dark:bg-gray-600 dark:bg-gray-800 rounded overflow-hidden"
                       @mouseover="showButtons = true"
                       @mouseleave="showButtons = false">
                       <transition name="fade">
@@ -118,8 +118,8 @@ const generatePDF = () => {
                     <table class="table-auto w-full border-separate mb-2">
                       <tbody>
                         <tr class="border-b border-gray-300">
-                          <td class="bg-gray-200 p-1 rounded-tl w-[40%] text-right font-semibold text-xs">{{ $t('common.damage') }}</td>
-                          <td class="bg-gray-100 p-1 rounded-tr text-xs">
+                          <td class="bg-gray-200 dark:bg-gray-700 p-1 rounded-tl w-[40%] text-right font-semibold text-xs">{{ $t('common.damage') }}</td>
+                          <td class="bg-gray-100 dark:bg-gray-600 p-1 rounded-tr text-xs">
                             <Skeleton v-if="loading" width="15px" height="15px" />
                             <span v-else>
                                 <span v-if="item.damage">
@@ -131,16 +131,16 @@ const generatePDF = () => {
                           </td>
                         </tr>
                         <tr class="">
-                          <td class="bg-gray-200 p-1 rounded-bl text-right font-semibold text-xs">{{ $t('common.requirements') }}</td>
-                          <td class="bg-gray-100 p-1 rounded-br">
+                          <td class="bg-gray-200 dark:bg-gray-700 p-1 rounded-bl text-right font-semibold text-xs">{{ $t('common.requirements') }}</td>
+                          <td class="bg-gray-100 dark:bg-gray-600 p-1 rounded-br">
                             <Skeleton v-if="loading" width="80px" height="15px" />
                             <span v-else class="text-xs">{{ item.requirements }}</span>
                           </td>
                         </tr>
                       </tbody>
                     </table>
-                    <div class="rounded bg-gray-100 overflow-hidden mb-2">
-                      <div class="bg-gray-200 py-1 px-2 rounded-tl">
+                    <div class="rounded bg-gray-100 dark:bg-gray-600 overflow-hidden mb-2">
+                      <div class="bg-gray-200 dark:bg-gray-700 py-1 px-2 rounded-tl">
                         <h2 class="font-semibold">{{ $t('common.description') }}</h2>
                       </div>
                       <div class="text-justify text-xs p-2">
@@ -148,8 +148,8 @@ const generatePDF = () => {
                         <p v-else>{{ item.description }}</p>
                       </div>
                     </div>
-                    <div class="rounded bg-gray-100 overflow-hidden mb-2">
-                      <div class="bg-gray-200 py-1 px-2 rounded-tl">
+                    <div class="rounded bg-gray-100 dark:bg-gray-600 overflow-hidden mb-2">
+                      <div class="bg-gray-200 dark:bg-gray-700 py-1 px-2 rounded-tl">
                         <h2 class="font-semibold">{{ $t('common.notes') }}</h2>
                       </div>
                       <div class="text-justify text-xs p-2">
@@ -157,8 +157,8 @@ const generatePDF = () => {
                         <p v-else v-for="note in item.notes">{{ note }}</p>
                       </div>
                     </div>
-                    <div class="rounded bg-gray-100 overflow-hidden mb-2">
-                      <div class="bg-gray-200 py-1 px-2 rounded-tl">
+                    <div class="rounded bg-gray-100 dark:bg-gray-600 overflow-hidden mb-2">
+                      <div class="bg-gray-200 dark:bg-gray-700 py-1 px-2 rounded-tl">
                         <h2 class="font-semibold">{{ $t('common.evolution_notes') }}</h2>
                       </div>
                       <div class="text-justify text-xs p-2">
@@ -171,32 +171,32 @@ const generatePDF = () => {
                     <table v-for="nivel in item.evolutionLevel" class="w-full border-separate mb-2">
                       <thead>
                         <tr>
-                          <th colspan="2" class="bg-gray-200 p-1 text-center rounded-t">{{ $t(`item_tier.tier_${nivel.level}`) }}</th>
+                          <th colspan="2" class="bg-gray-200 dark:bg-gray-700 p-1 text-center rounded-t">{{ $t(`item_tier.tier_${nivel.level}`) }}</th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr v-if="loading" class="border-b border-gray-300">
-                          <td class="bg-gray-100 p-1 rounded-br">
+                          <td class="bg-gray-100 dark:bg-gray-600 p-1 rounded-br">
                             <Skeleton width="80px" height="15px" />
                           </td>
                         </tr>
 
                         <template v-else>
                           <tr>
-                            <td class="bg-gray-200 p-1 text-right text-xs font-semibold">{{ $t('common.player_level') }}</td>
-                            <td class="bg-gray-100 p-1 ">
+                            <td class="bg-gray-200 dark:bg-gray-700 p-1 text-right text-xs font-semibold">{{ $t('common.player_level') }}</td>
+                            <td class="bg-gray-100 dark:bg-gray-600 p-1 ">
                               <p class="text-xs">{{ $t(`common.level.${nivel.player_level}`) }}</p>
                             </td>
                           </tr>
                           <tr class="border-b border-gray-300">
-                            <td class="bg-gray-200 p-1 text-right text-xs font-semibold">{{ $t(`bonus.title`) }}</td>
-                            <td class="bg-gray-100 p-1">
+                            <td class="bg-gray-200 dark:bg-gray-700 p-1 text-right text-xs font-semibold">{{ $t(`bonus.title`) }}</td>
+                            <td class="bg-gray-100 dark:bg-gray-600 p-1">
                               <p v-for="bonus in nivel.bonus" class="text-xs">{{ bonus }}</p>
                             </td>
                           </tr>
                           <tr>
-                            <td class="bg-gray-200 p-1 rounded-bl text-right text-xs font-semibold">{{ $t('common.evolution_requirement') }}</td>
-                            <td class="bg-gray-100 p-1 rounded-br">
+                            <td class="bg-gray-200 dark:bg-gray-700 p-1 rounded-bl text-right text-xs font-semibold">{{ $t('common.evolution_requirement') }}</td>
+                            <td class="bg-gray-100 dark:bg-gray-600 p-1 rounded-br">
                               <p class="text-xs">{{ nivel.evolution_requirement ? nivel.evolution_requirement : '-' }}</p>
                             </td>
                           </tr>
@@ -206,7 +206,7 @@ const generatePDF = () => {
                   </div>
                 </div>
               </div>
-              <div class="footer w-full h-7 bg-gray-200 py-1 px-2">
+              <div class="footer w-full h-7 bg-gray-200 dark:bg-gray-700 py-1 px-2">
                 <div class="flex flex-row justify-between items-center">
                   <div class="flex flex-row gap-2">
                     {{ $t('card.footer_left') }}
