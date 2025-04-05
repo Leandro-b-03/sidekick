@@ -10,8 +10,11 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@i2d/nuxt-pdf-frame": "^0.5.0",
     "@morev/vue-transitions": "^3.0.5",
+    "@nuxt/content": "^3.4.0",
     "@nuxtjs/i18n": "^9.2.1",
+    "@nuxtjs/mdc": "^0.16.1",
     "@nuxtjs/supabase": "^1.5.0",
     "@primeuix/themes": "^1.0.0-rc.1",
     "@primevue/forms": "^4.2.5",

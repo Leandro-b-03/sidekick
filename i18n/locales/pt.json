@@ -119,7 +119,8 @@
     "players": "Jogadores",
     "created": "Criado em",
     "winner": "Vencedor",
-    "credits": "Créditos: "
+    "credits": "Créditos: ",
+    "pdf-not-found": "PDF não encontrado",
   },
   "attr": {
     "str": "Força",
@@ -130,7 +131,7 @@
     "cha": "Carisma"
   },
   "home": {
-    "title": "Início",
+    "title": "Página inicial",
     "description": "Página inicial do seu site",
     "cards": {
       "title": "Bem-vindo ao site game master",

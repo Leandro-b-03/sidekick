@@ -6,18 +6,19 @@ const primeui = require('tailwindcss-primeui');
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
-  css: ['~/assets/css/main.css'],
+  css: ['@/assets/css/main.css'],
   vite: {
     plugins: [
       tailwindcss(),
     ],
   },
   modules: [
-    'nuxt-appwrite',
     '@nuxtjs/supabase',
     '@primevue/nuxt-module',
     '@nuxtjs/i18n',
     '@morev/vue-transitions/nuxt',
+    '@nuxt/content',
+    '@i2d/nuxt-pdf-frame'
   ],
   nitro: {
     replace: {
@@ -26,9 +27,24 @@ export default defineNuxtConfig({
       "global.navigator": 'node',
     },
   },
-  appwrite: {
-    endpoint: process.env.APPWRITE_URL,
-    project: process.env.APPWRITE_PROJECT
+  content: {
+    build: {
+      markdown: {
+        highlight: {
+          // Theme used in all color schemes.
+          // theme: 'github-light',
+          // OR
+          theme: {
+            // Default theme (same as single string)
+            default: 'github-light',
+            // Theme used if `html.dark`
+            dark: 'github-dark',
+            // Theme used if `html.sepia`
+            sepia: 'monokai'
+          }
+        }
+      }
+    }
   },
   supabase: {
     redirectOptions: {

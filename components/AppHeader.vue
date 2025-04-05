@@ -3,7 +3,7 @@ const router = useRouter();
 
 const items = ref([
   {
-    label: 'Home',
+    label: 'home.title',
     icon: 'pi pi-home',
     command: () => {
       router.push({ path: '/' });
@@ -13,7 +13,7 @@ const items = ref([
 
 const itensTinyScreen = ref([
   {
-    label: 'Home',
+    label: 'home.title',
     command: () => {
       router.push({ path: '/' });
     }
@@ -59,13 +59,13 @@ const itensTinyScreen = ref([
     icon: 'pi pi-shield',
     items: [
       {
-        label: 'combat.list',
+        label: 'combat.initiative.list',
         command: () => {
           router.push({ path: '/combat' });
         }
       },
       {
-        label: 'combat.create',
+        label: 'combat.initiative.title',
         command: () => {
           router.push({ path: '/combat/new' });
         }

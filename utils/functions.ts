@@ -45,3 +45,13 @@ export const save = async (data: any, table: string, supabase: any) => {
     throw error;
   }
 };
+
+export const loadPDF = async (url: string, path: any) => {
+  try {
+    const { default: pdfFile } = await import((url + path.default).replace(/\/\//g, '/'));
+    return pdfFile;
+  } catch (error) {
+    console.error('Error loading PDF:', error);
+    return null;
+  }
+};
