@@ -73,6 +73,18 @@ const itensTinyScreen = ref([
     ]
   }
 ]);
+const button = ref({
+  iconClass: 'pi-moon',
+});
+
+const onThemeToggler = (): void => {
+  const root = document.getElementsByTagName('html')[0];
+
+  root.classList.toggle('p-dark');
+  button.value.iconClass = button.value.iconClass === 'pi-moon' ? 'pi-sun' : 'pi-moon';
+
+  localStorage.setItem('theme', root.classList.contains('p-dark') ? 'dark' : 'light');
+};
 </script>
 
 <template>
@@ -108,6 +120,7 @@ const itensTinyScreen = ref([
         </a>
       </template>
       <template #end>
+        <Button :icon="button.iconClass" @click="onThemeToggler" />
       </template>
     </Menubar>
   </div>
