@@ -110,6 +110,9 @@ const openDialog = (data: any) => {
         <template #header>
           <span class="font-semibold" v-tooltip.top="$t('common.max-hp')">{{ $t('common.max-hp-abvr') }}</span>
         </template>
+        <template #editor="{ data, field }">
+          <InputText v-model="data[field]" type="number" max="999" min="0" autofocus class="w-[75px]" />
+        </template>
         <template #body="{ data }">
           {{ $t(data.maxHp) }}
         </template>
@@ -129,7 +132,7 @@ const openDialog = (data: any) => {
       </Column>
       <Column v-for="(col, index) in currentTurnNumber" field="id" :key="index" :header="`${$t('common.turn')} ${index + 1}`" style="width: 5%;">
         <template #editor="{ data, field }">
-          <InputText v-if="data.turnHistory[index] !== 'not_in_combat'" v-model="data.turnHistory[index].hp" type="number" max="20" min="1" autofocus class="w-[75px]" />
+          <InputText v-if="data.turnHistory[index] !== 'not_in_combat'" v-model="data.turnHistory[index].hp" type="number" max="999" min="0" autofocus class="w-[75px]" />
           <template v-else>{{ $t('combat.not_in_combat') }}</template>
         </template>
         <template #body="{ data }">
