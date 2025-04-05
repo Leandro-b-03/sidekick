@@ -82,133 +82,282 @@ Create a `.env` file in the root of your project and add the following variables
 
 ```env
 URL=http://localhost:3000/
-DATABASE=Appwrite database id
-NPCS=NPC collection id
-COMBATS=Combat collection id
-INITIATIVE=Initiative collection id
-ITEMS=Item collection id
+SUPABASE_URL=your supabase URL
+SUPABASE_KEY=your generated API key for supabase
 DEEPSEEK_URL=https://api.deepseek.com
 DEEPSEEK_API_KEY=Deepseek Api Key
 ```
 
 Make sure to keep your `.env` file secure and avoid committing it to version control.
 
-## Explanation of Appwrite and Deepseek
+## Explanation of Supabase and Deepseek
 
-### Appwrite
+### Supabase
 
-[Appwrite](https://appwrite.io/) is an open-source backend-as-a-service (BaaS) platform designed to simplify and accelerate the development of web, mobile, and server-side applications. It provides developers with a set of APIs and tools to manage databases, authentication, file storage, cloud functions, and more. In this project, Appwrite is used to manage collections such as `NPCS`, `COMBATS`, `INITIATIVE`, and `ITEMS`.
+[Supabase](https://supabase.com/) is an open-source backend-as-a-service (BaaS) platform that provides developers with tools to build scalable applications. It offers features such as authentication, real-time databases, storage, and serverless functions. In this project, Supabase is used to manage collections such as `NPCS`, `COMBATS`, `INITIATIVES`, and `ITEMS`.
 
 ### Deepseek
 
 [Deepseek](https://deepseek.com/) is an API-based service that provides advanced search and data analysis capabilities. It allows developers to integrate powerful search functionality into their applications. In this project, Deepseek is used to perform searches and data queries, with the `DEEPSEEK_URL` and `DEEPSEEK_API_KEY` environment variables enabling access to its API.
 
-## How This Project Uses Appwrite and Deepseek
+## How This Project Uses Supabase and Deepseek
 
-### Appwrite Usage
+### Supabase Usage
 
-This project leverages Appwrite to manage and store data in collections. The following collections are utilized:
+This project leverages Supabase to manage and store data in collections. The following collections are utilized:
 
 - **NPCS**: Stores data related to non-player characters (NPCs) in the RPG.
 - **COMBATS**: Tracks combat scenarios and their associated details.
 - **INITIATIVE**: Manages the initiative order for characters during combat.
 - **ITEMS**: Contains information about items available in the game.
 
-Appwrite's APIs are used for CRUD operations on these collections, ensuring seamless data management and integration with the application.
+Supabase's APIs are used for CRUD operations on these collections, ensuring seamless data management and integration with the application.
 
-### NPC Attributes in Appwrite
+### NPC Attributes in Supabase
 
-The `NPCS` collection in Appwrite contains the following attributes:
+### NPC Attributes in Supabase
 
-| Attribute         | Type         | Description                                                                 |
-|-------------------|--------------|-----------------------------------------------------------------------------|
-| `name`            | `string`     | The name of the NPC.                                                       |
-| `race`            | `string`     | The race of the NPC.                                                       |
-| `class`           | `string`     | The class or role of the NPC.                                              |
-| `job`             | `string`     | The job or occupation of the NPC.                                          |
-| `armour_class`    | `integer`    | The armor class value of the NPC.                                          |
-| `initiative`      | `string`     | The initiative value of the NPC.                                           |
-| `speed`           | `string`     | The speed or movement capability of the NPC.                               |
-| `hit_points`      | `string`     | The hit points of the NPC.                                                 |
-| `hit_dice`        | `string`     | The hit dice used for the NPC.                                             |
-| `description`     | `string`     | A brief description of the NPC.                                            |
-| `appearance`      | `string`     | The physical appearance of the NPC.                                        |
-| `languages`       | `string`     | The languages spoken by the NPC.                                           |
-| `saving_throws`   | `string`     | The saving throws associated with the NPC.                                 |
-| `attr`            | `string[]`   | A list of attributes or abilities of the NPC.                              |
-| `sex_orientation` | `string`     | The sexual orientation of the NPC.                                         |
-| `affiliation`     | `string`     | The affiliation or group the NPC belongs to.                               |
-| `alignment`       | `string`     | The alignment of the NPC (e.g., lawful good, chaotic evil).                |
-| `background`      | `string`     | The background or history of the NPC.                                      |
-| `backstory`       | `string`     | The detailed backstory of the NPC.                                         |
-| `gender`          | `string`     | The gender of the NPC.                                                     |
-| `goal`            | `string`     | The goal or objective of the NPC.                                          |
-| `personality`     | `string`     | The personality traits of the NPC.                                         |
-| `items`           | `string[]`   | A list of items the NPC possesses.                                         |
-| `enemy`           | `boolean`    | Indicates whether the NPC is an enemy.                                     |
-| `secret_plot`     | `string`     | Any secret plot or hidden agenda of the NPC.                               |
-| `spells`          | `string[]`   | A list of spells the NPC can cast.                                         |
-| `difficult`       | `string`     | The difficulty level associated with the NPC.                              |
-| `age`             | `integer`    | The age of the NPC.                                                        |
-| `level`           | `integer`    | The level of the NPC.                                                      |
+The `NPCS` collection in Supabase is created using the following SQL schema:
 
-These attributes define the structure of the `NPCS` collection and are used to store and manage data related to non-player characters in the RPG.
+```sql
+create table public.npcs (
+  id bigint generated by default as identity not null,
+  slug text null,
+  name character varying not null,
+  description text null,
+  level smallint null,
+  difficult character varying null,
+  age smallint null,
+  race character varying null,
+  class character varying null,
+  job character varying null,
+  armour_class character varying null,
+  initiative character varying null,
+  speed character varying null,
+  hit_points character varying null,
+  hit_dice character varying null,
+  saving_throws character varying null,
+  attr json null,
+  items json null,
+  spells json null,
+  appearance character varying null,
+  appearance_description text null,
+  languages text null,
+  sex_orientation character varying null,
+  affiliation character varying null,
+  alignment character varying null,
+  background character varying null,
+  backstory character varying null,
+  gender character varying null,
+  goal character varying null,
+  personality character varying null,
+  enemy boolean null,
+  secret_plot text null,
+  created_at timestamp with time zone not null default now(),
+  update_at timestamp with time zone null default now(),
+  constraint npcs_pkey primary key (id)
+) TABLESPACE pg_default;
+```
 
-### ITEM Attributes in Appwrite
+### Explanation of Attributes
 
-The `ITEMS` collection in Appwrite contains the following attributes:
+| Attribute               | Type                       | Description                                                                 |
+|-------------------------|----------------------------|-----------------------------------------------------------------------------|
+| `id`                    | `bigint`                   | A unique identifier for the NPC.                                           |
+| `slug`                  | `text`                     | A URL-friendly identifier for the NPC.                                     |
+| `name`                  | `character varying`        | The name of the NPC.                                                       |
+| `description`           | `text`                     | A brief description of the NPC.                                            |
+| `level`                 | `smallint`                 | The level of the NPC.                                                      |
+| `difficult`             | `character varying`        | The difficulty level associated with the NPC.                              |
+| `age`                   | `smallint`                 | The age of the NPC.                                                        |
+| `race`                  | `character varying`        | The race of the NPC.                                                       |
+| `class`                 | `character varying`        | The class or role of the NPC.                                              |
+| `job`                   | `character varying`        | The job or occupation of the NPC.                                          |
+| `armour_class`          | `character varying`        | The armor class value of the NPC.                                          |
+| `initiative`            | `character varying`        | The initiative value of the NPC.                                           |
+| `speed`                 | `character varying`        | The speed or movement capability of the NPC.                               |
+| `hit_points`            | `character varying`        | The hit points of the NPC.                                                 |
+| `hit_dice`              | `character varying`        | The hit dice used for the NPC.                                             |
+| `saving_throws`         | `character varying`        | The saving throws associated with the NPC.                                 |
+| `attr`                  | `json`                     | A JSON object containing attributes or abilities of the NPC.               |
+| `items`                 | `json`                     | A JSON object containing items the NPC possesses.                          |
+| `spells`                | `json`                     | A JSON object containing spells the NPC can cast.                          |
+| `appearance`            | `character varying`        | The physical appearance of the NPC.                                        |
+| `appearance_description`| `text`                     | A detailed description of the NPC's appearance.                            |
+| `languages`             | `text`                     | The languages spoken by the NPC.                                           |
+| `sex_orientation`       | `character varying`        | The sexual orientation of the NPC.                                         |
+| `affiliation`           | `character varying`        | The affiliation or group the NPC belongs to.                               |
+| `alignment`             | `character varying`        | The alignment of the NPC (e.g., lawful good, chaotic evil).                |
+| `background`            | `character varying`        | The background or history of the NPC.                                      |
+| `backstory`             | `character varying`        | The detailed backstory of the NPC.                                         |
+| `gender`                | `character varying`        | The gender of the NPC.                                                     |
+| `goal`                  | `character varying`        | The goal or objective of the NPC.                                          |
+| `personality`           | `character varying`        | The personality traits of the NPC.                                         |
+| `enemy`                 | `boolean`                  | Indicates whether the NPC is an enemy.                                     |
+| `secret_plot`           | `text`                     | Any secret plot or hidden agenda of the NPC.                               |
+| `created_at`            | `timestamp with time zone` | The timestamp when the NPC was created.                                    |
+| `update_at`             | `timestamp with time zone` | The timestamp when the NPC was last updated.                               |
 
-| Attribute         | Type       | Description                                                                 |
-|-------------------|------------|-----------------------------------------------------------------------------|
-| `name`            | `string`   | The name of the ITEM.                                                       |
-| `class`           | `string`   | The class or role of the ITEM.                                              |
-| `description`     | `string`   | A brief description of the ITEM.                                            |
-| `weapon_type`     | `string`   | The type of weapon the ITEM uses.                                           |
-| `requirements`    | `string`   | Any specific requirements related to the ITEM.                              |
-| `type`            | `string`   | The type or category of the ITEM.                                           |
-| `wondrous_item`   | `string`   | Indicates if the ITEM possesses a wondrous item.                            |
-| `rarity`          | `string`   | The rarity level of the ITEM.                                               |
-| `evolution_level` | `string[]` | A list of evolution levels for the ITEM.                                    |
-| `notes`           | `string[]` | Additional notes about the ITEM.                                            |
-| `evolution_notes` | `string[]` | Notes related to the ITEM's evolution.                                      |
-| `damage`          | `string[]` | A list of damage values associated with the ITEM.                           |
-| `item_tier`       | `string`   | The tier of items the ITEM can use or possess.                              |
-| `damage_type`     | `string`   | The type of damage the ITEM can inflict.                                    |
+This schema defines the structure of the `NPCS` collection and is used to store and manage data related to non-player characters in the RPG.
 
-These attributes define the structure of the `ITEMS` collection and are used to store and manage data related to non-player characters in the RPG.
+### ITEM Attributes in Supabase
 
-### COMBAT Attributes in Appwrite
+The `ITEMS` collection in Supabase is created using the following SQL schema:
 
-The `COMBATS` collection in Appwrite contains the following attributes:
+```sql
+create table public.items (
+  id bigint generated by default as identity not null,
+  slug text null,
+  name character varying null,
+  class character varying null,
+  description text null,
+  rarity character varying null,
+  item_tier character varying null,
+  type character varying null,
+  weapon_type character varying null,
+  wondrous_item character varying null,
+  damage json null,
+  damage_type character varying null,
+  requirements character varying null,
+  notes json null,
+  evolution_level json null,
+  evolution_notes json null,
+  created_at timestamp with time zone not null default now(),
+  update_at timestamp with time zone null default now(),
+  constraint items_pkey primary key (id)
+) TABLESPACE pg_default;
+```
 
-| Attribute   | Type       | Default  | Description                                                                              |
-|-------------|------------|----------|------------------------------------------------------------------------------------------|
-| `combat_id` | `string`   | -        | A unique identifier for the combat.                                                      |
-| `monsters`  | `integer`  | `0`      | The number of monsters involved in the combat.                                           |
-| `players`   | `integer`  | `0`      | The number of players participating in the combat.                                       |
-| `turns`     | `integer`  | `1`      | The current turn number in the combat.                                                   |
-| `status`    | `enum`     | `running`| The status of the combat (`running`, `finished`).                                        |
-| `won`       | `enum`     | `none`   | Who have won the combat, players or npc or still running (`players`, `monster`, `none`). |
+### Explanation of Attributes
 
-These attributes define the structure of the `COMBATS` collection and are used to manage and track combat scenarios in the RPG.
+| Attribute         | Type                       | Description                                                            |
+|-------------------|----------------------------|------------------------------------------------------------------------|
+| `id`              | `bigint`                   | A unique identifier for the item.                                      |
+| `slug`            | `text`                     | A URL-friendly identifier for the item.                                |
+| `name`            | `character varying`        | The name of the item.                                                  |
+| `class`           | `character varying`        | The class or role of the item.                                         |
+| `description`     | `text`                     | A brief description of the item.                                       |
+| `rarity`          | `character varying`        | The rarity level of the item.                                          |
+| `item_tier`       | `character varying`        | The tier of items the item can use or possess.                         |
+| `type`            | `character varying`        | The type or category of the item.                                      |
+| `weapon_type`     | `character varying`        | The type of weapon the item uses.                                      |
+| `wondrous_item`   | `character varying`        | Indicates if the item possesses a wondrous property.                   |
+| `damage`          | `json`                     | A JSON object containing damage values associated with the item.       |
+| `damage_type`     | `character varying`        | The type of damage the item can inflict.                               |
+| `requirements`    | `character varying`        | Any specific requirements related to the item.                         |
+| `notes`           | `json`                     | A JSON object containing additional notes about the item.              |
+| `evolution_level` | `json`                     | A JSON object containing evolution levels for the item.                |
+| `evolution_notes` | `json`                     | A JSON object containing notes related to the item's evolution.        |
+| `created_at`      | `timestamp with time zone` | The timestamp when the item was created.                               |
+| `update_at`       | `timestamp with time zone` | The timestamp when the item was last updated.                          |
 
-### INITIATIVE Attributes in Appwrite
+This schema defines the structure of the `ITEMS` collection and is used to store and manage data related to items in the RPG.
 
-The `INITIATIVE` collection in Appwrite contains the following attributes:
+### COMBAT Attributes in Supabase
 
-| Attribute       | Type         | Description                                                                 |
-|-----------------|--------------|-----------------------------------------------------------------------------|
-| `current_hp`    | `integer`    | The current hit points of the entity.                                       |
-| `id`            | `string`     | A unique identifier for the entity.                                         |
-| `initiative`    | `integer`    | The initiative value of the entity.                                         |
-| `max_hp`        | `integer`    | The maximum hit points of the entity.                                       |
-| `name`          | `string`     | The name of the entity.                                                     |
-| `status`        | `string`     | The current status of the entity (e.g., active, unconscious).               |
-| `turn_history`  | `string[]`   | A list of actions or events associated with the entity's turns.             |
-| `type`          | `string`     | The type of entity (e.g., player, NPC, monster).                            |
-| `combat_id`     | `string`     | The identifier of the combat this entity is associated with.                |
+The `COMBATS` collection in Supabase is created using the following SQL schema:
 
-These attributes define the structure of the `INITIATIVE` collection and are used to manage turn order and related data during combat scenarios in the RPG.
+```sql
+create table public.combats (
+  id bigint generated by default as identity not null,
+  monsters smallint null,
+  players smallint null,
+  turns smallint null,
+  status public.combat_status null,
+  won public.combat_won null,
+  created_at timestamp with time zone not null default now(),
+  updated_at timestamp with time zone null default now(),
+  constraint combat_pkey primary key (id)
+) TABLESPACE pg_default;
+```
+
+`COMBATS` enum:
+```sql
+CREATE TYPE combat_won AS ENUM ('monsters', 'players', 'draw', 'none');
+```
+
+```sql
+CREATE TYPE combat_status AS ENUM ('ongoing', 'completed', 'abandoned');
+```
+
+### Explanation of Attributes
+
+| Attribute     | Type                         | Description                                                                |
+|---------------|------------------------------|----------------------------------------------------------------------------|
+| `id`          | `bigint`                     | Auto-generated| A unique identifier for the combat.                        |
+| `monsters`    | `smallint`                   | The number of monsters involved in the combat.                             |
+| `players`     | `smallint`                   | The number of players participating in the combat.                         |
+| `turns`       | `smallint`                   | The current turn number in the combat.                                     |
+| `status`      | `public.combat_status`       | The status of the combat (`ongoing`, `completed`, `abandoned`).            |
+| `won`         | `public.combat_won`          | Indicates the winner of the combat (`players`, `monster`, `draw`, `none`). |
+| `created_at`  | `timestamp with time zone`   | The timestamp when the combat was created.                                 |
+| `updated_at`  | `timestamp with time zone`   | The timestamp when the combat was last updated.                            |
+
+This schema defines the structure of the `COMBATS` table, which is used to manage and track combat scenarios in the RPG.
+
+### INITIATIVE Attributes in Supabase
+
+The `INITIATIVE` collection in Supabase is created using the following SQL schema:
+
+```sql
+create table public.initiatives (
+  id bigint generated by default as identity not null,
+  combat_id bigint null,
+  name character varying null,
+  initiative smallint null,
+  max_hp bigint null,
+  current_hp bigint null,
+  status character varying null,
+  type character varying null,
+  turn_history json null,
+  combatant_id character varying null,
+  created_at timestamp with time zone not null default now(),
+  updated_at timestamp with time zone null default now(),
+  constraint initiatives_pkey primary key (id),
+  constraint initiatives_combat_id_fkey foreign key (combat_id) references combats (id) on update cascade on delete cascade
+) tablespace pg_default;
+```
+
+### Explanation of Attributes
+
+| Attribute       | Type                         | Description                                                                        |
+|-----------------|------------------------------|------------------------------------------------------------------------------------|
+| `id`            | `bigint`                     | Auto-generated| A unique identifier for the initiative entry.                      |
+| `combat_id`     | `bigint`                     | The identifier of the combat this entity is associated with.                       |
+| `name`          | `character varying`          | The name of the entity.                                                            |
+| `initiative`    | `smallint`                   | The initiative value of the entity.                                                |
+| `max_hp`        | `bigint`                     | The maximum hit points of the entity.                                              |
+| `current_hp`    | `bigint`                     | The current hit points of the entity.                                              |
+| `status`        | `character varying`          | The current status of the entity (e.g., active, unconscious).                      |
+| `type`          | `character varying`          | The type of entity (e.g., player, NPC, monster).                                   |
+| `turn_history`  | `json`                       | A JSON object containing the actions or events associated with the entity's turns. |
+| `combatant_id`  | `character varying`          | A unique identifier for the combatant.                                             |
+| `created_at`    | `timestamp with time zone`   | The timestamp when the initiative entry was created.                               |
+| `updated_at`    | `timestamp with time zone`   | The timestamp when the initiative entry was last updated.                          |
+
+This schema defines the structure of the `INITIATIVE` collection and is used to manage turn order and related data during combat scenarios in the RPG.
+
+For all tables you should run:
+```sql
+CREATE POLICY "Enable insert for all users" 
+ON public.npcs/itens/initiatives/combats
+FOR INSERT 
+TO public 
+WITH CHECK (true);
+
+CREATE POLICY "Enable delete for all users" 
+ON public.npcs/itens/initiatives/combats
+FOR DELETE 
+TO public 
+USING (true);
+
+CREATE POLICY "Enable update for all users" 
+ON public.npcs/itens/initiatives/combats
+FOR UPDATE 
+TO public 
+USING (true) 
+WITH CHECK (true);
+```
 
 ### Deepseek Usage
 

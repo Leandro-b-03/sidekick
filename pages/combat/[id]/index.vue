@@ -177,16 +177,30 @@ const onCellEditComplete = (event: any) => {
       }
       break;
 
-      case 'id':
-        combatants.value = combatants.value.map(combatant => {
-          if (combatant.id === data.id) {
-            const lastTurn = combatant.turnHistory[combatant.turnHistory.length - 1];
-            combatant.currentHp = parseInt(lastTurn?.hp, 10) ?? parseInt(combatant.currentHp, 10);
-            combatant.status = combatant.currentHp > 0 ? COMBATANT_STATUS.ALIVE : COMBATANT_STATUS.DEAD;
-          }
-          return combatant;
-        });
-        break;
+    case 'maxHp':
+      const newMaxHp = Number(newValue);
+      if (!isNaN(newMaxHp) && newMaxHp >= 0 && newMaxHp <= 999) {
+        data.maxHp = newMaxHp;
+        data.currentHp = Math.min(data.currentHp, newMaxHp); // Ensure current HP does not exceed max HP
+        if (data.turnHistory.length === 1) {
+          data.turnHistory[0].hp = newMaxHp;
+        }
+      } else {
+        console.warn(`Invalid max HP value: ${newValue}`);
+        // event.preventDefault();
+      }
+      break;
+
+    case 'id':
+      combatants.value = combatants.value.map(combatant => {
+        if (combatant.id === data.id) {
+          const lastTurn = combatant.turnHistory[combatant.turnHistory.length - 1];
+          combatant.currentHp = parseInt(lastTurn?.hp, 10) ?? parseInt(combatant.currentHp, 10);
+          combatant.status = combatant.currentHp > 0 ? COMBATANT_STATUS.ALIVE : COMBATANT_STATUS.DEAD;
+        }
+        return combatant;
+      });
+      break;
 
     default:
       console.log(`Attempted to edit unhandled field: ${field}`);
@@ -264,6 +278,10 @@ const saveCombat = async () => {
       status: combatStatus,
       won: won,
     };
+    if (combatId.value !== 'new') {
+      combatData.id = combatId.value;
+    }
+
     const { data, error } = await supabase
       .from('combats')
       .upsert(combatData, { onConflict: ['id'] })
