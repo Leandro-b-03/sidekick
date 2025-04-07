@@ -24,15 +24,15 @@ export const printSection = (html: HTMLElement, options: any = {}) => {
       htmlContent = html_.outerHTML.replace(/text-xs/g, 'text-[7px]').replace(/<h2 class="font-semibold">/g, '<h2 class="font-semibold text-[10px]">').replace(/<th colspan="2" class="bg-gray-200 p-1 text-center rounded-t">/g, '<th colspan="2" class="bg-gray-200 p-1 text-center rounded-t text-[10px]">');
     }
 
-    console.log('htmlContent', htmlContent);
-
     if (popupWindow) {
-      popupWindow.document.open();
-      popupWindow.document.write(`
+      const popup = `
         <html>
           <head>
             <title>PDF Preview</title>
             <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"><\/script>
+            <script src="https://cdn.jsdelivr.net/npm/pdfmake@latest/build/pdfmake.min.js"><\/script>
+            <script src="https://cdn.jsdelivr.net/npm/pdfmake@latest/build/vfs_fonts.min.js"><\/script>
+            <script src="https://cdn.jsdelivr.net/npm/html-to-pdfmake/browser.js"><\/script>
             <style>
               @page {
                 size: A4 ${orientation}; /* Use A4 size */
@@ -80,14 +80,27 @@ export const printSection = (html: HTMLElement, options: any = {}) => {
             </style>
           </head>
           <body>
-            <object class="page" type="application/pdf">
-              <div class="column">
-                ${htmlContent}
-              </div>
-            </object>
+            <script>
+              const html = \`
+                <object class="page" type="application/pdf">
+                  <div class="column">
+                    ${htmlContent}
+                  </div>
+                </object>
+              \`;
+
+              const converted = htmlToPdfmake(html);
+              const docDefinition = { content: converted };
+              
+              // Generate PDF
+              pdfMake.createPdf(docDefinition).download('document.pdf');
+            </script>
           </body>
         </html>
-      `);
+      `;
+      console.log(popup);
+      popupWindow.document.open();
+      popupWindow.document.write(popup);
       popupWindow.document.close();
     } else {
       console.error('Failed to open popup window.');
