@@ -13,7 +13,7 @@ const supabase = useSupabaseClient();
 const MAX_INITIATIVE = 20;
 const DEFAULT_HP = 50;
 const loading = ref(false);
-const panelColapsed = ref(false);
+const panelCollapsed = ref(route.params.id !== 'new');
 const combatId = ref(route.params.id);
 const combatants = ref<CombatantDocument[]>([]);
 
@@ -366,10 +366,14 @@ onMounted(async () => {
     await getDocument();
   }
 });
+
+useSeoMeta({
+  title: `${t('combat.title')} - ${t('sidekick')}`,
+});
 </script>
 
 <template>
-  <COMBATForm :monsters="monsters" :initialValues="initialValues" :resolver="resolver" :onFormSubmit="onFormSubmit" :loading="loading" :panelColapsed="panelColapsed" />
+  <COMBATForm :monsters="monsters" :initialValues="initialValues" :resolver="resolver" :onFormSubmit="onFormSubmit" :loading="loading" :panelCollapsed="panelCollapsed" />
 
   <COMBATTable :combatants="combatants" :loading="loading" :addPlayer="addPlayer" :onCellEditComplete="onCellEditComplete" :advanceTurn="advanceTurn" :saveCombat="saveCombat" :resetCombat="resetCombat" :removeCombatant="removeCombatant" />
 </template>

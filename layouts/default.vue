@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { Analytics } from '@vercel/analytics/nuxt'
 import { SpeedInsights } from "@vercel/speed-insights/nuxt"
+
+const config = useRuntimeConfig();
+const dev = import.meta.env.DEV;
 </script>
 
 <template>
-  <Analytics/>
-  <SpeedInsights/>
+  <Analytics v-if="dev != true" />
+  <SpeedInsights v-if="dev != true" />
   <div class="app">
     <Toast />
     <AppHeader />

@@ -5,12 +5,13 @@ import type { SelectOption } from '@/interfaces/common.type';
 
 const supabase = useSupabaseClient();
 const { locale } = useNuxtApp().$i18n;
+const t = useNuxtApp().$i18n.t;
 const config = useRuntimeConfig();
 const router = useRouter();
 const route = useRoute();
 
 const loading = ref(true);
-const panelCollapsed = ref(true);
+const panelCollapsed = ref(route.params.id !== 'new');
 
 const npc = reactive<NpcLocalState>({
   show: false,
@@ -262,6 +263,7 @@ const getDocument = async () => {
       
       Object.assign(npc, {
         ...filteredNPC,
+        armourClass: response.armour_class,
         secretPlot: response.secret_plot,
         savingThrows: response.saving_throws,
         sexOrientation: response.sex_orientation,
@@ -281,8 +283,17 @@ const getDocument = async () => {
 
 onMounted(async () => {;
   await getDocument();
-  panelCollapsed.value = route.params.id !== 'new';
   loading.value = false;
+
+  let title = `${t('generate.npcs.create')} - ${t('sidekick')}`;
+
+  if (route.params.id !== 'new') {
+    title = `${npc.name} - ${t('sidekick')}`;
+  }
+
+  useSeoMeta({
+    title: title,
+  });
 });
 </script>
 

@@ -177,7 +177,7 @@
     "initiative": {
       "title": "Iniciativa",
       "description": "Gere o conteúdo estático do seu site",
-      "list": "Lista de Combates",
+      "list": "Lista de Combates"
     },
     "add": {
       "header": "Adicionar monstros"

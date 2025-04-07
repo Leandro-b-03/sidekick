@@ -18,6 +18,7 @@ const showButtons = ref(false);
 const op = ref(null);
 const file = ref(null);
 const pdfSection = ref<HTMLElement | null>(null);
+const visible = ref(false);
 
 /*
  * Function to handle file change event
@@ -46,7 +47,7 @@ const togglePopover = (event: Event) => {
 const generatePDF = () => {
   // Safety check: ensure the ref is attached to an element
   if (pdfSection.value) {
-    printSection(pdfSection.value, { portrait: true }); // Call your print utility
+    printSection(pdfSection.value, { portrait: false }); // Call your print utility
   } else {
     console.warn('PDF section reference is not available.');
   }

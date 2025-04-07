@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const supabase = useSupabaseClient();
 const config = useRuntimeConfig();
+const t = useNuxtApp().$i18n.t;
 
 const npcs = ref([]);
 const items = ref([]);
@@ -54,11 +55,15 @@ const fetchCombats = async () => {
 };
 
 onMounted(async () => {
-  loading.value = true
+  loading.value = true;
   await fetchNPC();
   await fetchItems();
   await fetchCombats();
-  loading.value = false
+  loading.value = false;
+});
+
+useSeoMeta({
+  title: `${t('home.title')} - ${t('sidekick')}`,
 });
 </script>
 

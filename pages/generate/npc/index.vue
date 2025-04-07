@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const { locale } = useNuxtApp().$i18n;
+const t = useNuxtApp().$i18n.t;
 const supabase = useSupabaseClient();
 const config = useRuntimeConfig();
 const route = useRoute();
@@ -200,6 +201,10 @@ watch(() => route.query, async () => {
   loading.value = true;
   fetchDocuments();
   loading.value = false;
+});
+
+useSeoMeta({
+  title: `${t('generate.npcs.list')} - ${t('sidekick')}`,
 });
 </script>
 

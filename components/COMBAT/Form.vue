@@ -20,7 +20,7 @@ const props = defineProps({
     type: Function,
     required: true,
   },
-  panelColapsed: { // Renamed from panelColapsed (typo) in the original provided code snippet's watch
+  panelCollapsed: { // Renamed from panelCollapsed (typo) in the original provided code snippet's watch
     type: Boolean,
     required: false, // Parent controls this state
   },
@@ -30,7 +30,7 @@ const props = defineProps({
   }
 });
 
-const panelColapsed = ref(props.panelColapsed);
+const panelCollapsed = ref(props.panelCollapsed);
 const search = ref(route.params.id ? false : true);
 const header = ref(!search.value ? 'combat.add.header' : 'search.combat.header');
 const panel = ref(null);
@@ -55,7 +55,7 @@ const panel = ref(null);
 
 <template>
   <transition-fade group>
-    <Panel :header="$t(header)" class="w-full shadow-sm" toggleable :collapsed="panelColapsed" ref="panel">
+    <Panel :header="$t(header)" class="w-full shadow-sm" toggleable :collapsed="panelCollapsed" ref="panel">
       <Form v-slot="$form" :initialValues :resolver @submit="onFormSubmit" class="flex flex-col gap-4 w-full">
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-2">
           <div class="grid grid-cols-2 gap-1">

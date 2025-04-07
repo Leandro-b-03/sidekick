@@ -10,9 +10,21 @@ export const printSection = (html: HTMLElement, options: any = {}) => {
     if (!options.portrait) {
       html_.classList.remove('lg:w-[900px]');
       html_.classList.add('lg:w-[550px]');
+      const tables = html_.querySelectorAll('table');
+      tables.forEach((table) => {
+        const theads = table.querySelectorAll('thead');
+        theads.forEach((thead) => {
+          const ths = thead.querySelectorAll('th');
+          ths.forEach((th) => {
+        th.classList.add('text-[10px]');
+          });
+        });
+      });
 
-      htmlContent = html_.outerHTML.replace(/text-xs/g, 'text-[7px]').replace(/<h2 class="font-semibold">/g, '<h2 class="font-semibold text-[10px]">').replace(/<th colspan="2" class="bg-gray-200 p-1 text-center rounded-t">/g, '<th colspan="2" class="bg-gray-200 p-1 text-center rounded-t text-[10px]">')
+      htmlContent = html_.outerHTML.replace(/text-xs/g, 'text-[7px]').replace(/<h2 class="font-semibold">/g, '<h2 class="font-semibold text-[10px]">').replace(/<th colspan="2" class="bg-gray-200 p-1 text-center rounded-t">/g, '<th colspan="2" class="bg-gray-200 p-1 text-center rounded-t text-[10px]">');
     }
+
+    console.log('htmlContent', htmlContent);
 
     if (popupWindow) {
       popupWindow.document.open();
@@ -68,11 +80,11 @@ export const printSection = (html: HTMLElement, options: any = {}) => {
             </style>
           </head>
           <body>
-            <div class="page">
+            <object class="page" type="application/pdf">
               <div class="column">
                 ${htmlContent}
               </div>
-            </div>
+            </object>
           </body>
         </html>
       `);

@@ -48,7 +48,8 @@ export const save = async (data: any, table: string, supabase: any) => {
 
 export const loadPDF = async (url: string, path: any) => {
   try {
-    const { default: pdfFile } = await import((url + path.default).replace(/\/\//g, '/'));
+    const file = url + path.default;
+    const { default: pdfFile } = await import(file.replace(/\/\//g, '/'));
     return pdfFile;
   } catch (error) {
     console.error('Error loading PDF:', error);

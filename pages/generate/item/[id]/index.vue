@@ -4,12 +4,13 @@ import type { MagicItemLocalState, MagicItemDocument } from '@/interfaces/item.t
 import type { SelectOption } from '@/interfaces/common.type';
 
 const { locale } = useNuxtApp().$i18n;
+const t = useNuxtApp().$i18n.t;
 const supabase = useSupabaseClient();
 const config = useRuntimeConfig();
 const router = useRouter();
 const route = useRoute();
 
-const panelCollapsed = ref(true);
+const panelCollapsed = ref(route.params.id !== 'new');
 const loading = ref(true);
 const item = reactive<MagicItemLocalState>({
   show: false,
@@ -231,10 +232,19 @@ const getDocument = async () => {
   }
 }
 
-onMounted(async () => {
+onMounted(async () => {;
   await getDocument();
-  panelCollapsed.value = true;
   loading.value = false;
+
+  let title = `${t('generate.items.create')} - ${t('sidekick')}`;
+  
+  if (route.params.id !== 'new') {
+    title = `${item.name} - ${t('sidekick')}`;
+  }
+
+  useSeoMeta({
+    title: title,
+  });
 });
 </script>
 
