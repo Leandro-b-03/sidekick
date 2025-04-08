@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const { $jsPDF } = useNuxtApp();
+
 const props = defineProps({
   item: {
     type: Object,
@@ -41,16 +43,18 @@ const togglePopover = (event: Event) => {
   }
 };
 
-/**
- * Calls the utility function to generate a PDF from the specified HTML section.
- */
-const generatePDF = () => {
-  // Safety check: ensure the ref is attached to an element
-  if (pdfSection.value) {
-    printSection(pdfSection.value, { portrait: false }); // Call your print utility
-  } else {
-    console.warn('PDF section reference is not available.');
-  }
+// Safety check: ensure the ref is attached to an element
+// if (pdfSection.value) {
+//   printSection(pdfSection.value, { portrait: false }); // Call your print utility
+// } else {
+//   console.warn('PDF section reference is not available.');
+// }
+
+const generatePDF = async () => {
+  const doc = new $jsPDF('p', 'pt', 'a4');
+
+  doc.html(pdfSection.value?.outerHTML);
+  doc.save(`${props.item.name}.pdf`);
 };
 </script>
 
@@ -223,4 +227,7 @@ const generatePDF = () => {
       </div>
     </div>
   </TransitionGroup>
+  <div v-if="pdf" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50">
+    <iframe :src="pdf" class="w-full h-full" frameborder="0"></iframe>
+  </div>
 </template>
