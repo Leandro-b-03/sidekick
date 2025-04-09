@@ -254,7 +254,7 @@ const proficiency = (level: number | undefined | null): string => { // Corrected
                         <template v-else-if="npc.spells.level_n === undefined">
                           <template v-for="(spells, levelKey) in npc.spells" :key="levelKey">
                             <tr v-if="spells && spells.length > 0" class="border-b border-gray-300">
-                              <td class="bg-gray-200 dark:bg-gray-700 p-1 rounded-bl text-right">{{ $t(`spells.${levelKey}`) }}</td>
+                              <td class="bg-gray-200 dark:bg-gray-700 p-1 text-right"  :class="{ 'rounded-bl': isLastLevel(npc.spells, levelKey) }">{{ $t(`spells.${levelKey}`) }}</td>
                               <td class="bg-gray-100 dark:bg-gray-600 p-1" :class="{ 'rounded-br': isLastLevel(npc.spells, levelKey) }">
                                 <Tag v-for="(spell, index) in spells" :key="`spell-${levelKey}-${index}`" :value="spell" class="m-1" severity="success" size="small" />
                               </td>

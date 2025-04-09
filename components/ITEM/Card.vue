@@ -1,5 +1,7 @@
 <script setup lang="ts">
-const { $jsPDF } = useNuxtApp();
+import Item from '~/helpers/migration/item.vue';
+
+const { $html2pdf } = useNuxtApp();
 
 const props = defineProps({
   item: {
@@ -44,17 +46,14 @@ const togglePopover = (event: Event) => {
 };
 
 // Safety check: ensure the ref is attached to an element
-// if (pdfSection.value) {
-//   printSection(pdfSection.value, { portrait: false }); // Call your print utility
-// } else {
-//   console.warn('PDF section reference is not available.');
-// }
-
 const generatePDF = async () => {
-  const doc = new $jsPDF('p', 'pt', 'a4');
+  if (pdfSection.value) {
+    printSection(pdfSection.value, { filename: `${props.item.name}.pdf`, portrait: true }); // Call your print utility
+  } else {
+    console.warn('PDF section reference is not available.');
+  }
 
-  doc.html(pdfSection.value?.outerHTML);
-  doc.save(`${props.item.name}.pdf`);
+  // $html2pdf(pdfSection.value);
 };
 </script>
 
@@ -75,7 +74,7 @@ const generatePDF = async () => {
             <Button label="gerar PDF" @click="generatePDF" />
           </div>
           <div class="flex justify-center items-center inset-shadow-sm w-full h-auto rounded inset-shadow-gray-500 dark:inset-shadow-gray-900 striped-bg">
-            <div class="grid grid-cols-1 w-full lg:w-[900px] h-auto bg-white dark:bg-gray-900 shadow rounded overflow-hidden content-between" id="card-pdf" ref="pdfSection">
+            <div class="grid grid-cols-1 w-full lg:w-[900px] h-auto bg-white dark:bg-gray-900 shadow-xl rounded overflow-hidden content-between" id="card-pdf" ref="pdfSection">
               <div class="header bg-gray-800 p-4 flex flex-row justify-between items-center mb-1">
                 <div>
                   <Skeleton v-if="loading" width="150px" height="35px" />

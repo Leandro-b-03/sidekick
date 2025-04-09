@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import items from '@/pages/items.json';
+// import items from '@/pages/items.json';
 import type { MagicItemDocumentSave } from '@/interfaces/item.type'
 
 const supabase = useSupabaseClient();

@@ -26,7 +26,7 @@ export default defineNuxtConfig({
     '@nuxtjs/i18n',
     '@morev/vue-transitions/nuxt',
     '@nuxt/content',
-    '@i2d/nuxt-pdf-frame'
+    '@i2d/nuxt-pdf-frame',
   ],
   nitro: {
     replace: {
