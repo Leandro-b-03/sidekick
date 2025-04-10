@@ -16,29 +16,44 @@ export const printSection = (html: HTMLElement, options: any = {}) => {
   // 2. Apply modifications for PDF rendering (e.g., adjust sizes for landscape)
   //    Do this *before* getting outerHTML. Using classList/querySelector is more robust
   //    than string replacement where possible.
-  if (!options.portrait) {
+  // if (!options.portrait) {
     // Example: Adjust width class on the root cloned element
     // Ensure the class being removed actually exists on the 'html' element passed in.
     clonedElement.classList.remove('lg:w-[900px]');
     clonedElement.classList.add('lg:w-[550px]'); // Or set a specific width via style if needed
+    clonedElement.classList.remove('border');
+    clonedElement.classList.add('border-gray-600'); // Ensure full width for PDF
 
     // Example: Make text smaller globally or in specific areas for landscape
     clonedElement.querySelectorAll('.text-xs').forEach(el => {
-        el.classList.remove('text-xs');
-        el.classList.add('text-[8px]'); // Use a slightly larger PDF-specific size
+      el.classList.remove('text-xs');
+      el.classList.add('text-[10px]'); // Use a slightly larger PDF-specific size
     });
     clonedElement.querySelectorAll('h2.font-semibold').forEach(el => {
-        el.classList.add('text-[10px]'); // Ensure headers are readable
+      el.classList.remove('text-base');
+      el.classList.add('text-[12px]'); // Ensure headers are readable
     });
     clonedElement.querySelectorAll('table th').forEach(el => {
-        el.classList.add('text-[9px]'); // Adjust table header size
+      el.classList.add('text-[12px]'); // Adjust table header size
     });
     clonedElement.querySelectorAll('h2.text-3xl').forEach(el => {
-        el.classList.remove('text-3xl');
-        el.classList.add('text-[12px]'); // Adjust header size
+      el.classList.remove('text-3xl');
+      el.classList.add('text-[15px]'); // Adjust header size
+    });
+    clonedElement.querySelectorAll('table tbody tr td').forEach(el => {
+      el.classList.add('text-[12px]'); // Adjust table cell size
+    });
+    clonedElement.querySelectorAll('tr td.text-[10px]').forEach(el => {
+      el.classList.remove('text-[12px]');
+    });
+    clonedElement.querySelectorAll('button').forEach(el => {
+      el.remove(); // Remove buttons for PDF
+    });
+    clonedElement.querySelectorAll('div.flex.flex-row.justify-start').forEach(el => {
+      el.classList.add('mb-2'); // Add margin for spacing
     });
     // Add more specific adjustments as needed...
-  }
+  // }
   // Add a specific ID for easy targeting IF the original doesn't have one
   clonedElement.id = 'element-to-print-content';
 
@@ -84,9 +99,7 @@ export const printSection = (html: HTMLElement, options: any = {}) => {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            background: var(--p-tag-primary-background);
-            color: var(--p-tag-primary-color);
-            font-size: 0.875rem;
+            font-size: 0.7rem;
             font-weight: 700;
             padding: 0.25rem 0.5rem;
             border-radius: 6px;
@@ -152,18 +165,20 @@ export const printSection = (html: HTMLElement, options: any = {}) => {
             };
 
             console.log('Starting html2pdf generation...');
-            // Use modern chainable Promise syntax
-            html2pdf().set(pdfOptions).from(element).save()
-              .then(() => {
-                console.log('PDF has been generated and download triggered.');
-                if(loadingIndicator) loadingIndicator.innerHTML = 'PDF generated successfully! Download should start shortly... You can close this window.';
-                // Optional: Close popup automatically after a short delay
-                // setTimeout(() => { window.close(); }, 3000);
-              })
-              .catch((err) => {
-                console.error('html2pdf failed:', err);
-                if(loadingIndicator) loadingIndicator.innerHTML = '<h2>Error Generating PDF</h2><pre>' + err.message + '</pre>';
-              });
+            setTimeout(() => {
+              // Use modern chainable Promise syntax
+              html2pdf().set(pdfOptions).from(element).save()
+                .then(() => {
+                  console.log('PDF has been generated and download triggered.');
+                  if(loadingIndicator) loadingIndicator.innerHTML = 'PDF generated successfully! Download should start shortly... You can close this window.';
+                  // Optional: Close popup automatically after a short delay
+                  // setTimeout(() => { window.close(); }, 3000);
+                })
+                .catch((err) => {
+                  console.error('html2pdf failed:', err);
+                  if(loadingIndicator) loadingIndicator.innerHTML = '<h2>Error Generating PDF</h2><pre>' + err.message + '</pre>';
+                });
+            }, 400); // Delay to ensure all resources are loaded
           };
         </script>
       </body>

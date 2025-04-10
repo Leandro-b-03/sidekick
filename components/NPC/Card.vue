@@ -167,8 +167,8 @@ const proficiency = (level: number | undefined | null): string => { // Corrected
                           <td class="bg-gray-200 dark:bg-gray-700 p-1 text-right rounded-tl w-[40%]">{{ $t('common.saving_throws') }}</td>
                           <td class="bg-gray-100 dark:bg-gray-600 p-1 rounded-tr">
                             <Skeleton v-if="loading" width="80px" height="15px" />
-                            <div v-else>
-                              <Tag v-for="value in npc.savingThrows.split(',')" :key="`saving-${value}`" :value="`${value}`" class="m-1 !text-xs" severity="info" size="small" />
+                            <div v-else class="flex flex-row gap-1">
+                              <Tag v-for="value in npc.savingThrows.split(',')" :key="`saving-${value}`" :value="`${value}`" severity="info" size="small" />
                             </div>
                           </td>
                         </tr>
@@ -176,8 +176,8 @@ const proficiency = (level: number | undefined | null): string => { // Corrected
                           <td class="bg-gray-200 dark:bg-gray-700 p-1 text-right">{{ $t('common.languages') }}</td>
                           <td class="bg-gray-100 dark:bg-gray-600 p-1">
                             <Skeleton v-if="loading" width="80px" height="15px" />
-                            <div v-else>
-                              <Tag v-for="value in npc.languages.split(',')" :key="`saving-${value}`" :value="`${value}`" class="mr-1" severity="warn" size="small" />
+                            <div v-else class="flex flex-row gap-1">
+                              <Tag v-for="value in npc.languages.split(',')" :key="`saving-${value}`" :value="`${value}`" severity="warn" size="small" />
                             </div>
                           </td>
                         </tr>
@@ -256,7 +256,9 @@ const proficiency = (level: number | undefined | null): string => { // Corrected
                             <tr v-if="spells && spells.length > 0" class="border-b border-gray-300">
                               <td class="bg-gray-200 dark:bg-gray-700 p-1 text-right"  :class="{ 'rounded-bl': isLastLevel(npc.spells, levelKey) }">{{ $t(`spells.${levelKey}`) }}</td>
                               <td class="bg-gray-100 dark:bg-gray-600 p-1" :class="{ 'rounded-br': isLastLevel(npc.spells, levelKey) }">
-                                <Tag v-for="(spell, index) in spells" :key="`spell-${levelKey}-${index}`" :value="spell" class="m-1" severity="success" size="small" />
+                                <div class="flex flex-row gap-1">
+                                  <Tag v-for="(spell, index) in spells" :key="`spell-${levelKey}-${index}`" :value="spell" severity="success" size="small" />
+                                </div>
                               </td>
                             </tr>
                           </template>
