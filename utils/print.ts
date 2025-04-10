@@ -41,10 +41,9 @@ export const printSection = (html: HTMLElement, options: any = {}) => {
       el.classList.add('text-[15px]'); // Adjust header size
     });
     clonedElement.querySelectorAll('table tbody tr td').forEach(el => {
-      el.classList.add('text-[12px]'); // Adjust table cell size
-    });
-    clonedElement.querySelectorAll('tr td.text-[10px]').forEach(el => {
-      el.classList.remove('text-[12px]');
+      if (!el.classList.contains('text-[10px]')) {
+        el.classList.add('text-[12px]'); // Adjust table cell size
+      }
     });
     clonedElement.querySelectorAll('button').forEach(el => {
       el.remove(); // Remove buttons for PDF
