@@ -2,7 +2,7 @@
   "app": "APP",
   "sidekick": "Sidekick",
   "card": {
-    "footer_left": "Gerado por Mestre APP",
+    "footer_left": "Gerado por Sidekick APP",
     "footer_right": "©"
   },
   "common": {

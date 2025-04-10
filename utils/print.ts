@@ -121,7 +121,7 @@ export const printSection = (html: HTMLElement, options: any = {}) => {
       <body>
         <div id="pdf-loading-indicator" style="padding: 20px; font-size: 1.2em;">Generating PDF, please wait...</div>
 
-        <div id="element-to-print" style="opacity: 1; position: absolute; left: 0;"> ${htmlContent}
+        <div id="element-to-print" style="opacity: 1; position: absolute; left: -99999;"> ${htmlContent}
         </div>
 
         <script>
@@ -189,16 +189,7 @@ export const printSection = (html: HTMLElement, options: any = {}) => {
   popupWindow.document.open();
   popupWindow.document.write(popupHtml);
   popupWindow.document.close(); // Crucial to fire onload event
-  // Optional: Close the popup automatically after a short delay once the PDF is downloaded
-  popupWindow.onload = () => {
-    const interval = setInterval(() => {
-      if (popupWindow.closed) {
-        clearInterval(interval);
-      } else if (popupWindow.document.readyState === 'complete') {
-        setTimeout(() => {
-          popupWindow.close();
-        }, 1000); // Adjust delay as needed
-      }
-    }, 500);
-  };
+  setTimeout(() => {
+    popupWindow.close();
+  }, 2000);
 };

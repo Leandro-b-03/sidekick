@@ -226,7 +226,4 @@ const generatePDF = async () => {
       </div>
     </div>
   </TransitionGroup>
-  <div v-if="pdf" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50">
-    <iframe :src="pdf" class="w-full h-full" frameborder="0"></iframe>
-  </div>
 </template>
