@@ -221,7 +221,7 @@ const onFormSubmit = async ({ values, valid }: { values: any, valid: boolean }) 
 
     router.push({
       name: `generate-npc-id___${locale.value}`,
-      params: { id: dataToSave.slug },
+      params: { id: `${dataToSave.id}-${dataToSave.slug}` },
     });
 
   } catch (error) {

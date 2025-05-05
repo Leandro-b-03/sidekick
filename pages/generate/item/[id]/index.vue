@@ -185,7 +185,7 @@ const onFormSubmit = async ({ values, valid }: { values: any, valid: boolean }) 
 
     router.push({
       name: `generate-item-id___${locale.value}`,
-      params: { id: dataToSave.slug },
+      params: { id: `${dataToSave.id}-${dataToSave.slug}` },
     });
 
   } catch (error) {
