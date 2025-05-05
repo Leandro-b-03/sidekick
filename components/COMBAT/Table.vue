@@ -2,11 +2,11 @@
 import type { Combatant, MonsterInfo } from '~/interfaces/combat.type';
 
 // Define function prop types explicitly for clarity and safety
-type CellEditCompleteFn = (event: any) => Promise<void>;
-type AddPlayerFn = () => Promise<void>;
-type AdvanceTurnFn = () => Promise<void>;
+type CellEditCompleteFn = (event: any) => void;
+type AddPlayerFn = () => void;
+type AdvanceTurnFn = () => void;
 type SaveCombatFn = () => Promise<void>;
-type ResetCombatFn = () => Promise<void>;
+type ResetCombatFn = () => void;
 type RemoveCombatantFn = (combatant: Combatant) => void;
 
 // --- Props Definition ---
@@ -43,6 +43,14 @@ const props = defineProps({
   removeCombatant: {
     type: Function as PropType<RemoveCombatantFn>,
     required: true,
+  },
+  setSaveLocalStorage: {
+    type: Function as PropType<() => void>,
+    required: true,
+  },
+  saveLocalStorageConst: {
+    type: Boolean,
+    default: true,
   },
 });
 
@@ -144,7 +152,10 @@ const openDialog = (data: any) => {
       </Column>
     </DataTable>
     <div class="bg-white dark:bg-gray-900 flex flex-row justify-between items-center my-4 mx-2">
-      <Button icon="pi pi-save" :label="$t('combat.save_combat')" severity="primary" @click="saveCombat" />
+      <div class="flex flex-row gap-2">
+        <Button icon="pi pi-save" :label="$t('combat.save_combat')" severity="primary" @click="saveCombat" />
+        <Button icon="pi pi-pencil" :label="$t('combat.edit_combat')" :severity="saveLocalStorageConst ? 'success' : 'danger'" @click="setSaveLocalStorage" />
+      </div>
       <Button icon="pi pi-refresh" :label="$t('combat.reset_combat')" severity="danger" @click="resetCombat" />
     </div>
   </div>

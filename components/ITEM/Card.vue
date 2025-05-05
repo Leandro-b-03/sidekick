@@ -94,7 +94,7 @@ const generatePDF = async () => {
               <div class="body px-2">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-2">
                   <div>
-                    <div class="relative w-full h-auto mb-2 bg-gray-100 dark:bg-gray-600 dark:bg-gray-800 rounded overflow-hidden"
+                    <div class="relative w-full h-auto mb-2 bg-gray-100 dark:bg-gray-800 rounded overflow-hidden"
                       @mouseover="showButtons = true"
                       @mouseleave="showButtons = false">
                       <transition name="fade">

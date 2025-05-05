@@ -13,7 +13,7 @@ const props = defineProps<{
           <div class="header bg-gray-800 p-4 flex flex-row justify-between items-center mb-1">
             <div>
               <Skeleton v-if="loading" width="150px" height="35px" />
-              <NuxtLink v-else :to="`/generate/item/${item.slug}`">
+              <NuxtLink v-else :to="`/generate/item/${item.id}-${item.slug}`">
                 <h2 class="text-3xl text-gray-50 mb-0" v-tooltip.top="item.name">{{ textEllipsis(item.name, 15) }}</h2>
               </NuxtLink>
               <Skeleton v-if="loading" width="100px" height="15px" class="mt-1" />

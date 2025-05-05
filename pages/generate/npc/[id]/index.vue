@@ -244,14 +244,16 @@ const onFileChange = (event: Event) => {
 };
 
 const getDocument = async () => {
-  const id = route.params.id;
+  const [id, ...slugParts] = route.params.id.toString().split('-');
+  const slug = slugParts.join('-');
   if (id !== 'new') {
     npc.show = true;
     try {
       const { data, error } = await supabase
         .from('npcs')
         .select('*')
-        .eq('slug', id)
+        .eq('id', id)
+        .eq('slug', slug)
         .single();
 
       if (error) {

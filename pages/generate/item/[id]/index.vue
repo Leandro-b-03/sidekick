@@ -196,14 +196,16 @@ const onFormSubmit = async ({ values, valid }: { values: any, valid: boolean }) 
 };
 
 const getDocument = async () => {
-  const id = route.params.id;
+  const [id, ...slugParts] = route.params.id.toString().split('-');
+  const slug = slugParts.join('-');
   if (id !== 'new') {
     item.show = true;
     try {
       const { data, error } = await supabase
         .from('items')
         .select('*')
-        .eq('slug', id)
+        .eq('id', id)
+        .eq('slug', slug)
         .single();
 
       if (error) {

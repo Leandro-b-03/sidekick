@@ -16,6 +16,7 @@ const loading = ref(false);
 const panelCollapsed = ref(route.params.id !== 'new');
 const combatId = ref(route.params.id);
 const combatants = ref<CombatantDocument[]>([]);
+const saveLocalStorageConst = ref(true);
 
 if (import.meta.client) {
   const storedCombatants = localStorage.getItem('combatants');
@@ -46,8 +47,18 @@ const resolver = ({ values }) => {
   return { values, errors };
 };
 
+const setSaveLocalStorage = () => {
+  saveLocalStorageConst.value = !saveLocalStorageConst.value;
+}
+
 const saveLocalStorage = () => {
-  window.localStorage.setItem('combatants', JSON.stringify(combatants.value));
+  if (!saveLocalStorageConst.value) return;
+
+  if (import.meta.client) {
+    if (!combatants) return;
+
+    window.localStorage.setItem('combatants', JSON.stringify(combatants.value));
+  }
 }
 
 const generateUniqueId = (): string => `combatant_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
@@ -375,5 +386,5 @@ useSeoMeta({
 <template>
   <COMBATForm :monsters="monsters" :initialValues="initialValues" :resolver="resolver" :onFormSubmit="onFormSubmit" :loading="loading" :panelCollapsed="panelCollapsed" />
 
-  <COMBATTable :combatants="combatants" :loading="loading" :addPlayer="addPlayer" :onCellEditComplete="onCellEditComplete" :advanceTurn="advanceTurn" :saveCombat="saveCombat" :resetCombat="resetCombat" :removeCombatant="removeCombatant" />
+  <COMBATTable :combatants="combatants" :loading="loading" :addPlayer="addPlayer" :onCellEditComplete="onCellEditComplete" :advanceTurn="advanceTurn" :saveCombat="saveCombat" :resetCombat="resetCombat" :removeCombatant="removeCombatant" :saveLocalStorageConst="saveLocalStorageConst" :setSaveLocalStorage="setSaveLocalStorage" />
 </template>
