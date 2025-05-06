@@ -182,16 +182,21 @@
     "add": {
       "header": "Adicionar monstros"
     },
-    "not_in_combat": "Não estava em combate",
-    "not_in_combat_abvr": "NEC",
-    "add_player": "Adicionar Jogador ou NPC",
-    "add_enemy": "Adicionar Inimigo",
-    "add_turn": "Adicionar Turno",
-    "save_combat": "Salvar Combate",
-    "reset_combat": "Reiniciar Combate",
+    "not-in-combat": "Não estava em combate",
+    "not-in-combat_abvr": "NEC",
+    "add-player": "Adicionar Jogador ou NPC",
+    "add-enemy": "Adicionar Inimigo",
+    "add-turn": "Adicionar Turno",
+    "save-combat": "Salvar Combate",
+    "reset-combat": "Reiniciar Combate",
+    "edit-combat": "Salvamento de combata na memoria",
+    "alive": "Vivo",
+    "dead": "Morto",
     "messages": {
       "no-combatants": "Nenhum combatente encontrado",
-      "no-combatants-detail": "Adicione um jogador ou inimigo para iniciar o combate"
+      "no-combatants-detail": "Adicione um jogador ou inimigo para iniciar o combate",
+      "saved": "Combate salvo",
+      "saved-detail": "O seu combate foi registrado com sucesso"
     },
     "summary": "Resumo do Combate",
     "ongoing": "Em andamento",

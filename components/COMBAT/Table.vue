@@ -87,8 +87,8 @@ const openDialog = (data: any) => {
     <DataTable :value="combatants" editMode="cell" @cell-edit-complete="onCellEditComplete" scrollable class="w-full max-h-[800px]" scrollHeight="800px">
       <template #header>
         <div class="flex flex-wrap items-center justify-between gap-2">
-          <Button icon="pi pi-user" :label="$t('combat.add_player')" severity="success" @click="addPlayer" />
-          <Button icon="pi pi-plus" :label="$t('combat.add_turn')" severity="secondary" @click="advanceTurn" />
+          <Button icon="pi pi-user" :label="$t('combat.add-player')" severity="success" @click="addPlayer" />
+          <Button icon="pi pi-plus" :label="$t('combat.add-turn')" severity="secondary" @click="advanceTurn" />
         </div>
       </template>
       <Column field="order" style="width: 5%" header="#" frozen>
@@ -135,28 +135,28 @@ const openDialog = (data: any) => {
       </Column>
       <Column field="status" :header="$t('common.status')" style="width: 5%;">
         <template #body="{ data }">
-          <Tag :severity="data.status === 'alive' ? 'success' : 'danger'" :value="$t(data.status)"></Tag>
+          <Tag :severity="data.status === 'alive' ? 'success' : 'danger'" :value="$t(`combat.${data.status}`)"></Tag>
         </template>
       </Column>
       <Column v-for="(col, index) in currentTurnNumber" field="id" :key="index" :header="`${$t('common.turn')} ${index + 1}`" style="width: 5%;">
         <template #editor="{ data, field }">
           <InputText v-if="data.turnHistory[index] !== 'not_in_combat'" v-model="data.turnHistory[index].hp" type="number" max="999" min="0" autofocus class="w-[75px]" />
-          <template v-else>{{ $t('combat.not_in_combat') }}</template>
+          <template v-else>{{ $t('combat.not-in-combat') }}</template>
         </template>
         <template #body="{ data }">
           <template v-if="data.turnHistory[index] !== 'not_in_combat'">{{ data.turnHistory[index].hp }}</template>
           <template v-else>
-            <span v-tooltip.top="$t('combat.not_in_combat')">{{ $t('combat.not_in_combat_abvr') }}</span>
+            <span v-tooltip.top="$t('combat.not-in-combat')">{{ $t('combat.not-in-combat-abvr') }}</span>
           </template>
         </template>
       </Column>
     </DataTable>
     <div class="bg-white dark:bg-gray-900 flex flex-row justify-between items-center my-4 mx-2">
       <div class="flex flex-row gap-2">
-        <Button icon="pi pi-save" :label="$t('combat.save_combat')" severity="primary" @click="saveCombat" />
-        <Button icon="pi pi-pencil" :label="$t('combat.edit_combat')" :severity="saveLocalStorageConst ? 'success' : 'danger'" @click="setSaveLocalStorage" />
+        <Button icon="pi pi-save" :label="$t('combat.save-combat')" severity="primary" @click="saveCombat" />
+        <Button icon="pi pi-pencil" :label="$t('combat.edit-combat')" :severity="saveLocalStorageConst ? 'success' : 'danger'" @click="setSaveLocalStorage" />
       </div>
-      <Button icon="pi pi-refresh" :label="$t('combat.reset_combat')" severity="danger" @click="resetCombat" />
+      <Button icon="pi pi-refresh" :label="$t('combat.reset-combat')" severity="danger" @click="resetCombat" />
     </div>
   </div>
 

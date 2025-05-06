@@ -349,9 +349,9 @@ const saveCombat = async () => {
       }
     }
     
-
     // Clear local storage after saving
     localStorage.removeItem('combatants');
+    saveLocalStorageConst.value = false;
     $toast.add({ severity: 'success', summary: t('combat.messages.saved'), detail: t('combat.messages.saved-detail'), life: 3000 });
 
     router.push({
