@@ -1,3 +1,47 @@
+# 🧭 Sidekick – Feature Documentation
+
+## Overview
+
+**Sidekick** is a web application designed to assist tabletop RPG Game Masters in managing campaigns through the creation and organization of NPCs, items, and combat encounters. Some functions leverage AI to boost narrative creation.
+
+---
+
+## 🧑‍🤝‍🧑 NPC Management
+
+- **List NPCs**  
+  Displays a collection of all previously created NPCs with basic metadata and tags.
+
+- **Create NPC**  
+  Uses AI to generate fully detailed NPCs based on user selections (e.g., race, class, alignment).
+
+---
+
+## 🗃️ Item Management
+
+- **List Items**  
+  Visual interface for reviewing and managing existing in-game items.
+
+- **Create Item**  
+  AI-assisted generation of RPG items with attributes such as type, rarity, magical effects, and appearance.
+
+---
+
+## ⚔️ Combat Tracker
+
+- **List Combats**  
+  Show archived or active combat encounters with participants and round tracking.
+
+- **Create Combat**  
+  Create a new encounter, add characters/enemies, and track initiative, actions, and damage.
+
+---
+
+## 🛠 Technologies
+
+- **Frontend:** Vue 3 (via Nuxt)
+- **Styling:** TailwindCSS
+- **AI Integration:** OpenAI API or similar for NPC and Item creation
+
 # Standard instalation
 ## Nuxt Minimal Starter
 
