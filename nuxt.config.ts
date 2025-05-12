@@ -61,6 +61,11 @@ export default defineNuxtConfig({
       exclude: ['*'],
       saveRedirectToCookie: false,
     },
+    cookieOptions: {
+      maxAge: 60 * 60 * 8,
+      sameSite: 'lax',
+      secure: true
+    }
   },
   i18n: {
     locales: [

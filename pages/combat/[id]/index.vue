@@ -17,6 +17,7 @@ const panelCollapsed = ref(route.params.id !== 'new');
 const combatId = ref(route.params.id);
 const combatants = ref<CombatantDocument[]>([]);
 const saveLocalStorageConst = ref(true);
+const monsters = ref<{ value: string; label: string }[]>([]);
 
 if (import.meta.client) {
   const storedCombatants = localStorage.getItem('combatants');
@@ -25,10 +26,25 @@ if (import.meta.client) {
   }
 }
 
-const { data: monsters, status: statusMonsters, error: errorMonsters, refresh: refreshMonsters, clear: clearMonsters } = await useAsyncData(
-  'monsters',
-  () => $fetch(`${config.public.url}tables/monsters.json`)
-);
+const fetchMonsters = async () => {
+  try {
+    const { data: monstersData } = await useAsyncData(
+      'monsters',
+      () => $fetch<{ value: string; label: string }[]>(`${config.public.url}tables/monsters.json`)
+    );
+
+    if (monstersData?.value) {
+      monsters.value = monstersData.value.map((monster) => ({
+        value: monster.value,
+        label: t(monster.label),
+      }));
+    }
+  } catch (error) {
+    console.error('Error fetching monsters:', error);
+  }
+};
+
+await fetchMonsters();
 
 const initialValues = reactive({
   monster: monsters.value[0]

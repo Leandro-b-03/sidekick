@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const router = useRouter();
+const user = useSupabaseUser();
 
 const items = ref([
   {
@@ -85,6 +86,8 @@ const onThemeToggler = (): void => {
 
   localStorage.setItem('theme', root.classList.contains('p-dark') ? 'dark' : 'light');
 };
+
+console.log('user', user.value);
 </script>
 
 <template>
@@ -102,8 +105,17 @@ const onThemeToggler = (): void => {
         </a>
       </template>
       <template #end>
-        <div class="flex items-center h-full">
+        <div class="flex items-center h-full w-full gap-2">
           <Button :icon="`pi ${button.iconClass}`" severity="secondary" @click="onThemeToggler" />
+          <NuxtLink v-if="!user" v-ripple class="flex items-center" :to="{ path: '/login' }">
+            <Button :label="$t('common.login')" severity="secondary" />
+          </NuxtLink>
+          <Button v-else severity="secondary" class="!py-1">
+            <Avatar :image="user.user_metadata.avatar_url" shape="circle" />
+            <span class="ml-2 text-sm font-semibold text-surface-900 dark:text-surface-300">
+              {{ user.user_metadata.full_name || user.email }}
+            </span>
+          </Button>
         </div>
       </template>
     </Menubar>

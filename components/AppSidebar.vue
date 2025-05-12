@@ -93,8 +93,6 @@ function handleShortcut(event: KeyboardEvent) {
     .filter(Boolean)
     .join('+');
 
-  console.log('Pressed keys:', pressedKeys);
-
   if (shortcutMap[pressedKeys]) {
     event.preventDefault();
     event.stopPropagation();

@@ -61,17 +61,7 @@ const panel = ref(null);
           <div class="grid grid-cols-2 gap-1">
             <div class="flex flex-col gap-1" key="monsters">
               <label for="monster" class="text-sm font-medium text-surface-500 dark:text-surface-300 mb-2">{{ $t('monsters.title') }}</label>
-              <Select :options="monsters" optionLabel="label" name="monster" type="text" placeholder="monster" fluid>
-                <template #value="{ value }">
-                  <div class="flex flex-row items-center gap-2">
-                    <span>{{ $t(value.label) }}</span>
-                  </div>
-                </template>
-                <template #option="{ option }">
-                  <div class="flex flex-row items-center gap-2">
-                    <span>{{ $t(option.label) }}</span>
-                  </div>
-                </template>
+              <Select :options="monsters" :filter="true" optionLabel="label" name="monster" :placeholder="$t('monsters.select-placeholder')" fluid>
               </Select>
               <Message v-if="$form.type?.invalid" severity="error" size="small" variant="simple">{{ $form.type.error?.message }}</Message>
             </div>
