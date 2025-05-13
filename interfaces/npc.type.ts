@@ -71,6 +71,8 @@ export interface CharacterDocument {
   difficult: string;
   age: number; // Stored as number
   level: number; // Stored as number
+  id?: number; // Optional field for local state
+  user_npc?: []; // Optional field for user NPCs
 }
 
 // Interface for the LOCAL component reactive state

@@ -2,6 +2,7 @@
 const supabase = useSupabaseClient();
 const config = useRuntimeConfig();
 const t = useNuxtApp().$i18n.t;
+const user = useSupabaseUser();
 
 const npcs = ref([]);
 const items = ref([]);
@@ -14,7 +15,7 @@ const fetchNPC = async () => {
   try {
     const { data } = await supabase
       .from('npcs')
-      .select('*')
+      .select('*, user_npc (*, users (*))')
       .limit(4)
       .order('created_at', { ascending: false });
 
@@ -28,7 +29,7 @@ const fetchItems = async () => {
   try {
     const { data } = await supabase
       .from('items')
-      .select('*')
+      .select('*, user_item(*, users(*))')
       .limit(4)
       .order('created_at', { ascending: false });
 
@@ -42,13 +43,11 @@ const fetchCombats = async () => {
   try {
     const { data } = await supabase
       .from('combats')
-      .select('*')
+      .select('*, user_combat(*, users(*))')
       .limit(4)
       .order('created_at', { ascending: false });
 
     combats.value = data;
-
-    console.log(combats.value);
   } catch (error) {
     console.log(error);
   }

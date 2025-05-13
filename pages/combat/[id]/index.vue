@@ -9,6 +9,7 @@ const { $toast } = useNuxtApp();
 const config = useRuntimeConfig();
 const { locale } = useNuxtApp().$i18n;
 const supabase = useSupabaseClient();
+const user = useSupabaseUser();
 
 const MAX_INITIATIVE = 20;
 const DEFAULT_HP = 50;
@@ -363,6 +364,23 @@ const saveCombat = async () => {
       } catch (error) {
         console.error('Error saving combatant:', error);
       }
+    }
+
+    if (user.value) {
+      const userNPC = {
+        user_id: user.value.id,
+        npc_id: combatId.value,
+      };
+
+      console.log('User NPC:', userNPC);
+
+      await save(userNPC, 'user_npc', supabase)
+        .then(() => {
+          console.log('User NPC saved successfully');
+        })
+        .catch((error) => {
+          console.error('Error saving user NPC:', error);
+        });
     }
     
     // Clear local storage after saving

@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import type { CharacterDocument } from '@/interfaces/npc.type';
+
 const props = defineProps({
   npcs: {
-    type: Array,
+    type: Array as PropType<Array<CharacterDocument>>,
     default: () => []
   },
   loading: {
@@ -9,6 +11,7 @@ const props = defineProps({
     default: false
   }
 });
+console.log('NPCs:', props.npcs);
 </script>
 
 <template>
@@ -29,11 +32,14 @@ const props = defineProps({
         </template>
         <template #content>
           <div class="h-[400px] relative">
-            <div class="mb-1 w-full flex flex-row justify-start">
-              <Skeleton v-if="loading" width="100px" height="15px" class="mb-1" />
-              <h2 v-else class="text-gray-950 dark:text-gray-100 mr-2 text-lg">{{ $t(`classes.${npc.class}`) }}</h2>
-              <Skeleton v-if="loading" width="100px" height="15px" />
-              <h2 v-else class="text-gray-950 dark:text-gray-100 text-lg">{{ npc.job ? $t(`jobs.${npc.job}`) : '-' }}</h2>
+            <div class="mb-1 w-full flex flex-row justify-between">
+              <div class="flex justify-start">
+                <Skeleton v-if="loading" width="100px" height="15px" class="mb-1" />
+                <h2 v-else class="text-gray-950 dark:text-gray-100 mr-2 text-lg">{{ $t(`classes.${npc.class}`) }}</h2>
+                <Skeleton v-if="loading" width="100px" height="15px" />
+                <h2 v-else class="text-gray-950 dark:text-gray-100 text-lg">{{ npc.job ? $t(`jobs.${npc.job}`) : '-' }}</h2>
+              </div>
+              <Tag :value="npc.user_npc.length > 0 ? npc.user_npc.full_name : $t('common.unkown')" />
             </div>
             <div class="mb-4">
               <Skeleton v-if="loading" width="100px" height="15px" class="mb-1" />

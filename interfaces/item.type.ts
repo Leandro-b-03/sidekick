@@ -35,6 +35,8 @@ export interface MagicItemDocument {
   damage: DamageInfo | []; // JSON string of DamageInfo
   item_tier: string | null;
   damage_type: string | null;
+  id?: number; // Optional ID for local state management
+  user_item?: []; // Optional field for user items
 }
 
 // Structure for LOCAL component state (more convenient to work with)

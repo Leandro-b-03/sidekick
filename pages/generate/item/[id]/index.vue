@@ -9,6 +9,7 @@ const supabase = useSupabaseClient();
 const config = useRuntimeConfig();
 const router = useRouter();
 const route = useRoute();
+const user = useSupabaseUser();
 
 const panelCollapsed = ref(route.params.id !== 'new');
 const loading = ref(true);
@@ -182,6 +183,23 @@ const onFormSubmit = async ({ values, valid }: { values: any, valid: boolean }) 
         damageType: response.damage_type,
         image: defaultImage,
      });
+
+    if (user.value) {
+      const userNPC = {
+        user_id: user.value.id,
+        npc_id: response.id,
+      };
+
+      console.log('User NPC:', userNPC);
+
+      await save(userNPC, 'user_npc', supabase)
+        .then(() => {
+          console.log('User NPC saved successfully');
+        })
+        .catch((error) => {
+          console.error('Error saving user NPC:', error);
+        });
+    }
 
     router.push({
       name: `generate-item-id___${locale.value}`,

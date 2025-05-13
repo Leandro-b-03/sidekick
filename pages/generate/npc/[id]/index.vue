@@ -3,6 +3,7 @@ import defaultImage from '@/assets/images/npc/default_npc.webp';
 import type { NpcLocalState, CharacterDocument } from '@/interfaces/npc.type';
 import type { SelectOption } from '@/interfaces/common.type';
 
+const user = useSupabaseUser();
 const supabase = useSupabaseClient();
 const { locale } = useNuxtApp().$i18n;
 const t = useNuxtApp().$i18n.t;
@@ -218,6 +219,23 @@ const onFormSubmit = async ({ values, valid }: { values: any, valid: boolean }) 
       level: parseInt(generatedNpcData.level, 10) || 1,
       image: defaultImage,
     });
+
+    if (user.value) {
+      const userNPC = {
+        user_id: user.value.id,
+        npc_id: response.id,
+      };
+
+      console.log('User NPC:', userNPC);
+
+      await save(userNPC, 'user_npc', supabase)
+        .then(() => {
+          console.log('User NPC saved successfully');
+        })
+        .catch((error) => {
+          console.error('Error saving user NPC:', error);
+        });
+    }
 
     router.push({
       name: `generate-npc-id___${locale.value}`,

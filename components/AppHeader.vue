@@ -1,7 +1,10 @@
 <script setup lang="ts">
 const router = useRouter();
 const user = useSupabaseUser();
+const supabase = useSupabaseClient();
+const t = useNuxtApp().$i18n.t;
 
+const userPanel = ref();
 const items = ref([
   {
     label: 'home.title',
@@ -74,6 +77,30 @@ const itensTinyScreen = ref([
     ]
   }
 ]);
+const userMenu = ref([
+  {
+    label: t('common.profile'),
+    icon: 'pi pi-fw pi-user',
+    command: () => {
+      router.push({ path: '/profile' });
+    }
+  },
+  {
+    label: t('common.settings'),
+    icon: 'pi pi-fw pi-cog',
+    command: () => {
+      router.push({ path: '/settings' });
+    }
+  },
+  { separator: true },
+  {
+    label: t('common.sign-out'),
+    icon: 'pi pi-fw pi-sign-out',
+    command: () => {
+      signOut();
+    }
+  }
+]);
 const button = ref({
   iconClass: 'pi-moon',
 });
@@ -87,7 +114,14 @@ const onThemeToggler = (): void => {
   localStorage.setItem('theme', root.classList.contains('p-dark') ? 'dark' : 'light');
 };
 
-console.log('user', user.value);
+const toggle = (event) => {
+  userPanel.value.toggle(event);
+}
+
+const signOut = async () => {
+  const { error } = await supabase.auth.signOut()
+  if (error) console.log(error)
+}
 </script>
 
 <template>
@@ -110,12 +144,15 @@ console.log('user', user.value);
           <NuxtLink v-if="!user" v-ripple class="flex items-center" :to="{ path: '/login' }">
             <Button :label="$t('common.login')" severity="secondary" />
           </NuxtLink>
-          <Button v-else severity="secondary" class="!py-1">
+          <Button v-else severity="secondary" class="!py-1" @click="toggle">
             <Avatar :image="user.user_metadata.avatar_url" shape="circle" />
             <span class="ml-2 text-sm font-semibold text-surface-900 dark:text-surface-300">
               {{ user.user_metadata.full_name || user.email }}
             </span>
           </Button>
+          <Popover ref="userPanel">
+            <Menu :model="userMenu" class="!border-none" />
+          </Popover>
         </div>
       </template>
     </Menubar>
