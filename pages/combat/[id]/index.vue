@@ -369,12 +369,12 @@ const saveCombat = async () => {
     if (user.value) {
       const userNPC = {
         user_id: user.value.id,
-        npc_id: combatId.value,
+        combat_id: combatId.value,
       };
 
       console.log('User NPC:', userNPC);
 
-      await save(userNPC, 'user_npc', supabase)
+      await save(userNPC, 'user_combat', supabase)
         .then(() => {
           console.log('User NPC saved successfully');
         })

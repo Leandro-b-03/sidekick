@@ -187,12 +187,10 @@ const onFormSubmit = async ({ values, valid }: { values: any, valid: boolean }) 
     if (user.value) {
       const userNPC = {
         user_id: user.value.id,
-        npc_id: response.id,
+        item_id: response.id,
       };
 
-      console.log('User NPC:', userNPC);
-
-      await save(userNPC, 'user_npc', supabase)
+      await save(userNPC, 'user_item', supabase)
         .then(() => {
           console.log('User NPC saved successfully');
         })
