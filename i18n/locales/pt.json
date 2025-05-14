@@ -212,6 +212,29 @@
     "completed": "Concluído",
     "abandoned": "Abandonado"
   },
+  "locations": {
+    "title": "Reino",
+    "description": "Gere o conteúdo estático do seu site",
+    "list": "Lista de Reinos",
+    "create": "Criar Reino",
+    "name": "Nome do Reino",
+    "population": "População do Reino",    
+  },
+  "adventures": {
+    "title": "Aventura",
+    "description": "Gere o conteúdo estático do seu site",
+    "list": "Lista de Aventuras",
+    "create": "Criar Aventura",
+    "name": "Nome da Aventura",
+  },
+  "characters": {
+    "title": "Personagens",
+    "description": "Gere o conteúdo estático do seu site",
+    "list": "Lista de Personagens",
+    "create": "Criar Personagem",
+    "name": "Nome do Personagem",
+    "age": "Idade do Personagem"
+  },
   "age": {
     "title": "Idade",
     "unknown": "Desconhecido"

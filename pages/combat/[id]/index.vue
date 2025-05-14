@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { COMBATANT_STATUS } from '@/interfaces/combat.type';
 import type { CombatantDocument, CombatDocument, CombatantLocalState } from '@/interfaces/combat.type';
+import monstersData from '@/tables/monsters.json';
 
 const route = useRoute();
 const router = useRouter();
@@ -29,13 +30,8 @@ if (import.meta.client) {
 
 const fetchMonsters = async () => {
   try {
-    const { data: monstersData } = await useAsyncData(
-      'monsters',
-      () => $fetch<{ value: string; label: string }[]>(`${config.public.url}tables/monsters.json`)
-    );
-
-    if (monstersData?.value) {
-      monsters.value = monstersData.value.map((monster) => ({
+    if (monstersData) {
+      monsters.value = monstersData.map((monster) => ({
         value: monster.value,
         label: t(monster.label),
       }));

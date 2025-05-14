@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const router = useRouter();
+const user = useSupabaseUser();
 
 const expandedKeys = ref([]);
 const items = ref([
@@ -63,6 +64,72 @@ const items = ref([
         icon: 'pi pi-cog',
         shortcut: 'Ctrl+Shift+Alt+3',
         command: () => router.push('/combat/new')
+      }
+    ]
+  },
+  {
+    key: 'locations',
+    label: 'locations.title',
+    icon: 'pi pi-map',
+    visible: user.value?.aud === 'authenticated',
+    items: [
+      {
+        key: 'locations-list',
+        label: 'locations.list',
+        icon: 'pi pi-list',
+        shortcut: 'Ctrl+Shift+4',
+        command: () => router.push('/locations')
+      },
+      {
+        key: 'locations-create',
+        label: 'locations.create',
+        icon: 'pi pi-plus',
+        shortcut: 'Ctrl+Shift+Alt+4',
+        command: () => router.push('/locations/new')
+      }
+    ]
+  },
+  {
+    key: 'adventures',
+    label: 'adventures.title',
+    icon: 'pi pi-book',
+    visible: user.value?.aud === 'authenticated',
+    items: [
+      {
+        key: 'adventures-list',
+        label: 'adventures.list',
+        icon: 'pi pi-list',
+        shortcut: 'Ctrl+Shift+5',
+        command: () => router.push('/adventures')
+      },
+      {
+        key: 'adventures-create',
+        label: 'adventures.create',
+        icon: 'pi pi-plus',
+        shortcut: 'Ctrl+Shift+Alt+5',
+        command: () => router.push('/adventures/new')
+      }
+    ]
+  },
+  {
+    key: "characters",
+    label: "characters.title",
+    icon: "pi pi-users",
+    visible: user.value?.aud === 'authenticated',
+    items: [
+      {
+        key: "characters-list",
+        label: "characters.list",
+        icon: "pi pi-list",
+        shortcut: "Ctrl+Shift+6",
+        command: () => router.push("/characters")
+      },
+      {
+        key: "characters-create",
+        label: "characters.create",
+        icon: "pi pi-plus",
+        shortcut: "Ctrl+Shift+Alt+6",
+        command: () => router.push("/characters/new")
       }
     ]
   }

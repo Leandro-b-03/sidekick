@@ -2,6 +2,12 @@
 import defaultImage from '@/assets/images/items/default.webp';
 import type { MagicItemLocalState, MagicItemDocument } from '@/interfaces/item.type';
 import type { SelectOption } from '@/interfaces/common.type';
+import classesData from '@/tables/classes.json';
+import damages from '@/tables/damage_type.json';
+import types from '@/tables/types.json';
+import wondrousItems from '@/tables/wondrous_items.json';
+import rarities from '@/tables/rarities.json';
+import weapons from '@/tables/weapons.json';
 
 const { locale } = useNuxtApp().$i18n;
 const t = useNuxtApp().$i18n.t;
@@ -71,38 +77,13 @@ const item = reactive<MagicItemLocalState>({
   image: defaultImage,
 });
 
-const { data: classesData, status: statusClasses, error: errorClasses, refresh: refreshClasses, clear: clearClasses } = await useAsyncData<SelectOption[]>(
-  'classes',
-  () => $fetch(`${config.public.url}tables/classes.json`)
-);
-const { data: damages, status: statusDamages, error: errorDamages, refresh: refreshDamages, clear: clearDamages } = await useAsyncData<SelectOption[]>(
-  'damages',
-  () => $fetch(`${config.public.url}tables/damage_type.json`)
-);
-const { data: types, status: statusTypes, error: errorTypes, refresh: refreshTypes, clear: clearTypes } = await useAsyncData<SelectOption[]>(
-  'types',
-  () => $fetch(`${config.public.url}tables/types.json`)
-);
-const { data: wondrousItems, status: statusWondrousItems, error: errorWondrousItems, refresh: refreshWondrousItems, clear: clearWondrousItems } = await useAsyncData<SelectOption[]>(
-  'wondrousItems',
-  () => $fetch(`${config.public.url}tables/wondrous_items.json`)
-);
-const { data: rarities, status: statusRarities, error: errorRarities, refresh: refreshRarities, clear: clearRarities } = await useAsyncData<SelectOption[]>(
-  'rarities',
-  () => $fetch(`${config.public.url}tables/rarities.json`)
-);
-const { data: weapons, status: statusWeapons, error: errorWeapons, refresh: refreshWeapons, clear: clearWeapons } = await useAsyncData<SelectOption[]>(
-  'weapons',
-  () => $fetch(`${config.public.url}tables/weapons.json`)
-);
-
 const initialValues = reactive({
-  class_: classesData.value[0],
-  damage: damages.value[0],
-  type: types.value[0],
-  wondrous_items: wondrousItems.value[0],
-  rarity: rarities.value[0],
-  weapons: weapons.value[0],
+  class_: classesData[0],
+  damage: damages[0],
+  type: types[0],
+  wondrous_items: wondrousItems[0],
+  rarity: rarities[0],
+  weapons: weapons[0],
 });
 
 const resolver = ({ values }: { values: any }) => {

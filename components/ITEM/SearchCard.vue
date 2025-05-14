@@ -38,7 +38,8 @@ const props = defineProps({
                 <Skeleton v-if="loading" width="100px" height="15px" />
                 <h2 v-else class="text-gray-950 dark:text-gray-100 text-lg">{{ $t(`classes.${item.class}`) }}</h2>
               </div>
-              <Tag :value="item.user_item.length > 0 ? item.user_item.full_name : $t('common.unkown')" />
+              <Skeleton v-if="loading" width="100px" height="15px" />
+              <Tag v-else :value="item.user_item.length > 0 ? item.user_item[0].users.full_name : $t('common.unkown')" />
             </div>
             <div class="mb-4">
               <Skeleton v-if="loading" width="100px" height="15px" class="mb-1" />

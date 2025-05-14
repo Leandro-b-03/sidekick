@@ -39,7 +39,8 @@ console.log('NPCs:', props.npcs);
                 <Skeleton v-if="loading" width="100px" height="15px" />
                 <h2 v-else class="text-gray-950 dark:text-gray-100 text-lg">{{ npc.job ? $t(`jobs.${npc.job}`) : '-' }}</h2>
               </div>
-              <Tag :value="npc.user_npc.length > 0 ? npc.user_npc.full_name : $t('common.unkown')" />
+              <Skeleton v-if="loading" width="100px" height="15px" />
+              <Tag v-else :value="npc.user_npc.length > 0 ? npc.user_npc[0].users.full_name : $t('common.unkown')" />
             </div>
             <div class="mb-4">
               <Skeleton v-if="loading" width="100px" height="15px" class="mb-1" />

@@ -1,4 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import type { NuxtPage } from 'nuxt/schema'
 import Aura from '@primeuix/themes/aura';
 import tailwindcss from "@tailwindcss/vite";
 const primeui = require('tailwindcss-primeui');
@@ -34,6 +35,23 @@ export default defineNuxtConfig({
       'globalThis.navigator': 'node',
       "global.navigator": 'node',
     },
+  },
+  hooks: {
+    'pages:extend' (pages) {
+      function setMiddleware (pages: NuxtPage[]) {
+        for (const page of pages) {
+          if (!['/login', '/confirm', '/', '/npcs', '/items', '/combats'].includes(page.path)) {
+          page.meta ||= {}
+          // Note that this will override any middleware set in `definePageMeta` in the page
+          page.meta.middleware = ['auth']
+          }
+          if (page.children) {
+          setMiddleware(page.children)
+          }
+        }
+      }
+      setMiddleware(pages)
+    }
   },
   content: {
     build: {
