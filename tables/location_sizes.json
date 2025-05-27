@@ -1,0 +1,9 @@
+[
+  { "label": "locations.size.tiny", "value": "tiny" },
+  { "label": "locations.size.small", "value": "small" },
+  { "label": "locations.size.medium", "value": "medium" },
+  { "label": "locations.size.large", "value": "large" },
+  { "label": "locations.size.huge", "value": "huge" },
+  { "label": "locations.size.gargantuan", "value": "gargantuan" },
+  { "label": "common.other", "value": "other" }
+]

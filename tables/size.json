@@ -1,9 +1,0 @@
-[
-  { "label": "locations.form.size.tiny", "value": "tiny" },
-  { "label": "locations.form.size.small", "value": "small" },
-  { "label": "locations.form.size.medium", "value": "medium" },
-  { "label": "locations.form.size.large", "value": "large" },
-  { "label": "locations.form.size.huge", "value": "huge" },
-  { "label": "locations.form.size.gargantuan", "value": "gargantuan" },
-  { "label": "common.other", "value": "other" }
-]

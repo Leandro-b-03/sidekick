@@ -86,6 +86,28 @@ const items = ref([
         icon: 'pi pi-plus',
         shortcut: 'Ctrl+Shift+Alt+4',
         command: () => router.push('/locations/new')
+      },
+      {
+        key: 'buildings',
+        label: 'buildings.title',
+        icon: 'pi pi-building',
+        visible: user.value?.aud === 'authenticated',
+        items: [
+          {
+            key: 'buildings-list',
+            label: 'buildings.title',
+            icon: 'pi pi-list',
+            shortcut: 'Ctrl+Shift+7',
+            command: () => router.push('/locations/buildings')
+          },
+          {
+            key: 'buildings-create',
+            label: 'buildings.create',
+            icon: 'pi pi-plus',
+            shortcut: 'Ctrl+Shift+Alt+7',
+            command: () => router.push('/locations/buildings/new')
+          }
+        ]
       }
     ]
   },

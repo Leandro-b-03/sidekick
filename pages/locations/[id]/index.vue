@@ -1,6 +1,8 @@
 <script setup lang="ts">
 const user = useSupabaseUser();
 import types from '@/tables/location_types.json';
+import sizes from '@/tables/location_sizes.json';
+import governments from '@/tables/location_governments.json';
 
 const location = ref({
   id: '',
@@ -28,6 +30,8 @@ const location = ref({
 
 const initialValues = reactive({
   type: types[0],
+  size: sizes[0],
+  government: governments[0],
 });
 
 const resolver = ({ values }: { values: any }) => {
@@ -63,13 +67,13 @@ const onFormSubmit = async ({ values, valid }: { values: any, valid: boolean }) 
   <div class="bg-white dark:bg-gray-900 p-6 shadow rounded-2xl flex flex-col gap-4">
     <div class="flex gap-4">
         <div class="flex flex-col gap-2 flex-1">
-            <div class="text-2xl leading-tight font-semibold text-surface-900 dark:text-surface-0">Card Title</div>
-            <div class="text-base leading-tight text-surface-500 dark:text-surface-300">Vivamus id nisl interdum, blandit augue sit amet, eleifend mi.</div>
+            <div class="text-2xl leading-tight font-semibold text-surface-900 dark:text-surface-0">{{ $t('locations.form.title') }}</div>
+            <div class="text-base leading-tight text-surface-500 dark:text-surface-300">{{ $t('locations.form.subtitle') }}</div>
         </div>
     </div>
     <div class="flex flex-1">
       <div class="grid grid-cols-1 lg:grid-cols-3">
-        <LOCATIONForm v-if="user" :location="location" :onFormSubmit="onFormSubmit" :onFileChange="onFileChange" :resolver="resolver" :initialValues="initialValues" :types="types" />
+        <LOCATIONForm v-if="user" :location :onFormSubmit :onFileChange :resolver :initialValues :types :sizes :governments />
       </div>
     </div>
   </div>
