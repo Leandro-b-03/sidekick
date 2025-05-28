@@ -1,9 +1,20 @@
 <script setup lang="ts">
 const user = useSupabaseUser();
-import types from '@/tables/location_types.json';
+import typesData from '@/tables/location_types.json';
 import sizes from '@/tables/location_sizes.json';
-import governments from '@/tables/location_governments.json';
+import governmentsData from '@/tables/location_governments.json';
+import alignments from '@/tables/alignments.json';
 
+const t = useNuxtApp().$i18n.t;
+
+const types = typesData.map((type) => ({
+  value: type.value,
+  label: t(type.label),
+}));
+const governments = governmentsData.map((government) => ({
+  value: government.value,
+  label: t(government.label),
+}));
 const location = ref({
   id: '',
   name: '',
@@ -32,17 +43,19 @@ const initialValues = reactive({
   type: types[0],
   size: sizes[0],
   government: governments[0],
+  alignment: alignments[0],
 });
 
 const resolver = ({ values }: { values: any }) => {
   const errors: Record<string, { message: string }[]> = {};
-  // Use consistent names matching initialValues/form fields
   const requiredFields = ['name', 'description', 'type', 'size', 'environment', 'region', 'population', 'government', 'alignment', 'ruler'];
   requiredFields.forEach(field => {
     if (!values[field]) {
-      errors[field] = [{ message: `${field} is required.` }];
+      errors[field] = [{ message: t(`locations.form.error.${field}`) }];
     }
   });
+  errors.coordinates_x = values.coordinates?.x ? [] : [{ message: t(`locations.form.error.coordinates_x`) }];
+  errors.coordinates_y = values.coordinates?.y ? [] : [{ message: t(`locations.form.error.coordinates_y`) }];
   return { values, errors };
 };
 
@@ -72,8 +85,9 @@ const onFormSubmit = async ({ values, valid }: { values: any, valid: boolean }) 
         </div>
     </div>
     <div class="flex flex-1">
-      <div class="grid grid-cols-1 lg:grid-cols-3">
-        <LOCATIONForm v-if="user" :location :onFormSubmit :onFileChange :resolver :initialValues :types :sizes :governments />
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">
+        <LOCATIONForm v-if="user" :location :onFormSubmit :onFileChange :resolver :initialValues :types :sizes :governments :alignments />
+        <LOCATIONMap v-if="user" class="col-span-2" :location :onFileChange />
       </div>
     </div>
   </div>

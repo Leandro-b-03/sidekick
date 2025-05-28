@@ -59,13 +59,13 @@ const generatePDF = async () => {
 
 <template>
   <TransitionGroup name="fade">
-    <div v-if="item.show" class="bg-surface-50 dark:bg-surface-950 mt-4 rounded" key="item">
-      <div class="bg-surface-0 dark:bg-surface-900 lg:p-6 shadow rounded">
-        <div class="text-3xl font-medium text-surface-900 dark:text-surface-0 mb-2 ml-2 lg:ml-0">
+    <div v-if="item.show" class="bg-gray-50 dark:bg-gray-950 mt-4 rounded" key="item">
+      <div class="bg-gray-50 dark:bg-gray-900 lg:p-6 shadow rounded">
+        <div class="text-3xl font-medium text-gray-900 dark:text-gray-50 mb-2 ml-2 lg:ml-0">
           <Skeleton v-if="loading" height="25px" width="150px" />
           <span v-else>{{ $t('generate.items.title') }}</span>
         </div>
-        <div class="font-medium text-surface-500 dark:text-surface-300 mb-4 ml-2 lg:ml-0">
+        <div class="font-medium text-gray-500 dark:text-gray-300 mb-4 ml-2 lg:ml-0">
           <Skeleton v-if="loading" width="100px" />
           <span v-else>{{ $t('generate.items.description') }}</span>
         </div>
