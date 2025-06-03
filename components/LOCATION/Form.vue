@@ -50,7 +50,7 @@ const props = defineProps({
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-2">
       <div class="col-span-2 flex flex-col gap-1" key="name">
         <label for="name" class="text-sm font-medium text-surface-500 dark:text-surface-300 mb-2">{{ $t('locations.form.name') }}</label>
-        <InputText name="name" type="text" :placeholder="$t('locations.form.name-placeholder')" :value="location.name" :disabled="loading" />
+        <InputText name="name" type="text" :placeholder="$t('locations.form.name-placeholder')" :disabled="loading" />
         <Message v-if="$form.name?.invalid" severity="error" size="small" variant="simple">{{ $form.name.error?.message }}</Message>
       </div>
       <div class="col-span-2 flex flex-col gap-1" key="description">
@@ -71,17 +71,17 @@ const props = defineProps({
       </div>
       <div class="col-span-4 flex flex-col gap-1" key="description">
         <label for="description" class="text-sm font-medium text-surface-500 dark:text-surface-300 mb-2">{{ $t('locations.form.description') }}</label>
-        <Textarea name="description" :placeholder="$t('locations.form.description-placeholder')" :value="location.description" :disabled="loading" />
+        <Textarea name="description" :placeholder="$t('locations.form.description-placeholder')" :disabled="loading" />
         <Message v-if="$form.description?.invalid" severity="error" size="small" variant="simple">{{ $form.description.error?.message }}</Message>
       </div>
       <div class="col-span-2 flex flex-col gap-1" key="region">
         <label for="region" class="text-sm font-medium text-surface-500 dark:text-surface-300 mb-2">{{ $t('locations.form.region') }}</label>
-        <InputText name="region" type="text" :placeholder="$t('locations.form.region-placeholder')" :value="location.region" :disabled="loading" />
+        <InputText name="region" type="text" :placeholder="$t('locations.form.region-placeholder')" :disabled="loading" />
         <Message v-if="$form.region?.invalid" severity="error" size="small" variant="simple">{{ $form.region.error?.message }}</Message>
       </div>
       <div class="col-span-2 flex flex-col gap-1" key="population">
         <label for="population" class="text-sm font-medium text-surface-500 dark:text-surface-300 mb-2">{{ $t('locations.form.population') }}</label>
-        <InputNumber name="population" type="number" :placeholder="$t('locations.form.population-placeholder')" :value="location.population" :disabled="loading" :min="0" showButtons />
+        <InputNumber name="population" type="number" :placeholder="$t('locations.form.population-placeholder')" :disabled="loading" :min="0" showButtons />
         <Message v-if="$form.population?.invalid" severity="error" size="small" variant="simple">{{ $form.population.error?.message }}</Message>
       </div>
       <div class="col-span-2 flex flex-col gap-1" key="size">
@@ -118,12 +118,12 @@ const props = defineProps({
       </div>
       <div class="flex flex-col gap-1" key="coordinates-x">
         <label for="coordinates-x" class="text-sm font-medium text-surface-500 dark:text-surface-300 mb-2">{{ $t('locations.form.coordinates-x') }}</label>
-        <InputNumber name="coordinates_x" type="number" :placeholder="$t('locations.form.coordinates-x-placeholder')" :value="location.coordinates.x" :disabled="loading" :min="0" showButtons fluid />
+        <InputNumber name="coordinates_x" type="number" :placeholder="$t('locations.form.coordinates-x-placeholder')" :disabled="loading" :min="0" showButtons fluid />
         <Message v-if="$form.coordinates_x?.invalid" severity="error" size="small" variant="simple">{{ $form.coordinates_x.error?.message }}</Message>
       </div>
       <div class="flex flex-col gap-1" key="coordinates-y">
         <label for="coordinates-y" class="text-sm font-medium text-surface-500 dark:text-surface-300 mb-2">{{ $t('locations.form.coordinates-y') }}</label>
-        <InputNumber name="coordinates_y" type="number" :placeholder="$t('locations.form.coordinates-y-placeholder')" :value="location.coordinates.x" :disabled="loading" :min="0" showButtons fluid />
+        <InputNumber name="coordinates_y" type="number" :placeholder="$t('locations.form.coordinates-y-placeholder')" :disabled="loading" :min="0" showButtons fluid />
         <Message v-if="$form.coordinates_y?.invalid" severity="error" size="small" variant="simple">{{ $form.coordinates_y.error?.message }}</Message>
       </div>
       <div class="col-span-2 flex flex-col gap-1" key="alignment">

@@ -112,7 +112,7 @@ body {
 }
 
 .striped-bg {
-  background-color: #ccd1d6;
+  background-color: #d6d1cc;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -124,6 +124,23 @@ body {
 
 .p-dark .striped-bg {
   background-image: linear-gradient(135deg, #1e293b 25%, #334155 25%, #334155 50%, #1e293b 50%, #1e293b 75%, #334155 75%, #334155 100%);
+}
+
+.map-bg {
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 1.25rem 10px;
+  background-image: repeating-linear-gradient(0deg, #e0e4e815 0 1px, transparent 1px 35px),
+    repeating-linear-gradient(90deg, #e0e4e815 0 1px, transparent 1px 35px);
+  background-size: 35px 35px;
+}
+
+.p-dark .map-bg {
+  background-image: repeating-linear-gradient(0deg, #1e293b15 0 1px, transparent 1px 35px),
+    repeating-linear-gradient(90deg, #1e293b15 0 1px, transparent 1px 35px);
 }
 
 .fade-enter-active, .fade-leave-active {

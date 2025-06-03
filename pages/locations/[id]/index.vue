@@ -19,13 +19,13 @@ const location = ref({
   id: '',
   name: '',
   description: '',
-  type: '',
-  size: '',
+  type: types[0],
+  size: sizes[0],
   environment: '',
   region: '',
   population: '',
-  government: '',
-  alignment: '',
+  government: governments[0],
+  alignment: alignments[0],
   ruler: '',
   landmarks: [],
   history: [],
@@ -56,7 +56,15 @@ const resolver = ({ values }: { values: any }) => {
   });
   errors.coordinates_x = values.coordinates?.x ? [] : [{ message: t(`locations.form.error.coordinates_x`) }];
   errors.coordinates_y = values.coordinates?.y ? [] : [{ message: t(`locations.form.error.coordinates_y`) }];
+
+  changeLocation(values);
+
   return { values, errors };
+};
+
+const changeLocation = (newLocation: Record<string, any>) => {
+  Object.assign(location.value, newLocation);
+  console.log(location.value);
 };
 
 const onFileChange = (event: Event) => {
@@ -78,17 +86,19 @@ const onFormSubmit = async ({ values, valid }: { values: any, valid: boolean }) 
 
 <template>
   <div class="bg-white dark:bg-gray-900 p-6 shadow rounded-2xl flex flex-col gap-4">
-    <div class="flex gap-4">
-        <div class="flex flex-col gap-2 flex-1">
-            <div class="text-2xl leading-tight font-semibold text-surface-900 dark:text-surface-0">{{ $t('locations.form.title') }}</div>
-            <div class="text-base leading-tight text-surface-500 dark:text-surface-300">{{ $t('locations.form.subtitle') }}</div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">
+      <div>
+        <div class="flex gap-4 mb-6">
+            <div class="flex flex-col gap-2 flex-1">
+                <div class="text-2xl leading-tight font-semibold text-surface-900 dark:text-surface-0">{{ $t('locations.form.title') }}</div>
+                <div class="text-base leading-tight text-surface-500 dark:text-surface-300">{{ $t('locations.form.subtitle') }}</div>
+            </div>
         </div>
-    </div>
-    <div class="flex flex-1">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">
-        <LOCATIONForm v-if="user" :location :onFormSubmit :onFileChange :resolver :initialValues :types :sizes :governments :alignments />
-        <LOCATIONMap v-if="user" class="col-span-2" :location :onFileChange />
+        <div class="flex flex-1">
+          <LOCATIONForm v-if="user" :location :onFormSubmit :onFileChange :resolver :initialValues :types :sizes :governments :alignments />
+        </div>
       </div>
+      <LOCATIONMap v-if="user" class="col-span-2" :location />
     </div>
   </div>
 </template>
